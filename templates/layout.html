@@ -5,6 +5,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../static/css/style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="../static/javascript/common.js"></script>
 </head>
 <body>
 
@@ -14,13 +16,32 @@
 </div>
 
 <div class="navbar">
-  <a href="{{url_for('home.html')}}" class="active">Home</a>
-  <a href="#" class="right">Hi {{username}}!</a>
+  <a href="{{url_for('home.html')}}">Home</a>
+  <div class="dropdown">
+  <button class="dropbtn" onclick="openDropdown('userDropdown')">Hi {{user.username}}!
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-content" id="userDropdown">
+    <p>Current balance: <b>{{user.balance}}</b></p> 
+    <a href="#">View Profile</a>
+    <a href="#">Add Balance</a>
+    <a href="#">Purchase History</a>
+    {% if user.isSeller %}
+    <a href="#">Add/Modify Item</a>
+    <a href="#">Selling History</a>
+    {% endif %}
+    <a href="#">Logout</a>
+  </div>
+  </div> 
   <a href="#" class="right">View Cart</a>
+  
 </div>
 
+{% block content %}
+{% endblock %}
+
 <div class="footer">
-  <h2>A CS316 Project</h2>
+  <h3>A CS316 Project</h3>
 </div>
 
 </body>
