@@ -14,7 +14,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # follow the project description for detail
 
 # my implementation is based on sqlite3, you are free to change it to sqlAlchemy
-
+#guy
 
 def getLoginDetails():
     with sqlite3.connect('database.db') as conn:
