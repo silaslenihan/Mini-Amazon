@@ -8,6 +8,12 @@ CREATE TABLE Users
 
 --TODO: default balance to 0, make sure email and address are valid formats, make sure passwd fits constraints?
 
+CREATE TABLE Sellers
+(username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
+
+CREATE TABLE Buyers
+(username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
+
 CREATE TABLE OrderItems
 (order_id INTEGER NOT NULL PRIMARY KEY REFERENCES Orders(order_id),
 item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
