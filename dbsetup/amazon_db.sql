@@ -30,6 +30,12 @@ item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
 cat_name VARCHAR(20) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
 quantity INTEGER NOT NULL CHECK(quantity >= 0));
 
+CREATE TABLE OrderHistory
+(seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
+ order_id INTEGER NOT NULL REFERENCES Orders(order_id),
+ buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
+ PRIMARY KEY(seller_username,order_id));
+
 
 CREATE TABLE SellsItem
 (seller_username VARCHAR(20) NOT NULL PRIMARY KEY REFERENCES Sellers(username),
