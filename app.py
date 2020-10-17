@@ -2,6 +2,8 @@ from flask import *
 import sqlite3, hashlib, os
 from werkzeug.utils import secure_filename
 #from form import ItemSearchForm
+import json
+import os
 
 app = Flask(__name__)
 app.secret_key = 'random string'
@@ -30,7 +32,14 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
-    print(request.args['product'])
+    search=request.args['product']
+    database = "sampledata.json"
+    data = json.loads(open(database).read())
+    for x in data:
+        if x['Item Name'] == search:
+            print(x['Category'])
+            print(x['Average Rating'])
+            print(x['Price'])
     placetaker = ''
     return render_template('result.html', placetaker =placetaker)
 
