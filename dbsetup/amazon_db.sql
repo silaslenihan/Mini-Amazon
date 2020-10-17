@@ -1,3 +1,13 @@
+CREATE TABLE Users
+(username VARCHAR(256) NOT NULL PRIMARY KEY,
+ password VARCHAR(256) NOT NULL,
+ name VARCHAR(256) NOT NULL,
+ email VARCHAR(256) NOT NULL,
+ address VARCHAR(256) NOT NULL,
+ balance INTEGER NOT NULL);
+
+--TODO: default balance to 0, make sure email and address are valid formats, make sure passwd fits constraints?
+
 CREATE TABLE OrderItems
 (order_id INTEGER NOT NULL PRIMARY KEY REFERENCES Orders(order_id),
 item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
