@@ -32,11 +32,12 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
-    search=request.args['product']
+    search=request.args['product'].lower()
     database = "sampledata.json"
     data = json.loads(open(database).read())
     for x in data:
-        if x['Item Name'].lower() == search:
+        if search in x['Item Name'].lower():
+            print(x['Item Name'])
             print(x['Category'])
             print(x['Average Rating'])
             print(x['Price'])
