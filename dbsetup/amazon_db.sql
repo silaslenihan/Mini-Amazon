@@ -14,6 +14,16 @@ CREATE TABLE Sellers
 CREATE TABLE Buyers
 (username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
 
+CREATE TABLE Reviews
+(username VARCHAR(256) NOT NULL REFERENCES Users(username),
+ item_id INTEGER NOT NULL REFERENCES Items(item_id),
+ date_time DATE NOT NULL,
+ content VARCHAR(256) NOT NULL,
+ rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+ PRIMARY KEY(username,item_id,date_time));
+
+--TODO: make sure DATETIME in right format, is content long enough?
+
 CREATE TABLE OrderItems
 (order_id INTEGER NOT NULL PRIMARY KEY REFERENCES Orders(order_id),
 item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
