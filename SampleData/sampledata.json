@@ -1,0 +1,80 @@
+[
+ {
+   "Item Name": "Shirt",
+   "Category": "Clothes",
+   "Average Rating": 3.6,
+   "Price": 10
+ },
+ {
+   "Item Name": "Pants",
+   "Category": "Clothes",
+   "Average Rating": 4.2,
+   "Price": 20.54
+ },
+ {
+   "Item Name": "Shoes",
+   "Category": "Clothes",
+   "Average Rating": 1.2,
+   "Price": 12.63
+ },
+ {
+   "Item Name": "iPhone",
+   "Category": "Technology",
+   "Average Rating": 4.6,
+   "Price": 45.21
+ },
+ {
+   "Item Name": "Galaxy",
+   "Category": "Technology",
+   "Average Rating": 4.6,
+   "Price": 67.22
+ },
+ {
+   "Item Name": "Laptop",
+   "Category": "Technology",
+   "Average Rating": 2.3,
+   "Price": 12.43
+ },
+ {
+   "Item Name": "Sofa",
+   "Category": "Furniture",
+   "Average Rating": 5,
+   "Price": 34.21
+ },
+ {
+   "Item Name": "Chair",
+   "Category": "Furniture",
+   "Average Rating": 1.2,
+   "Price": 64.22
+ },
+ {
+   "Item Name": "Bed",
+   "Category": "Furniture",
+   "Average Rating": 3.4,
+   "Price": 23.45
+ },
+ {
+   "Item Name": "Desk",
+   "Category": "Furniture",
+   "Average Rating": 4.2,
+   "Price": 56.22
+ },
+ {
+   "Item Name": "Wood",
+   "Category": "Materials",
+   "Average Rating": 3.1,
+   "Price": 98.22
+ },
+ {
+   "Item Name": "Metal",
+   "Category": "Materials",
+   "Average Rating": 5,
+   "Price": 12.45
+ },
+ {
+   "Item Name": "Paper",
+   "Category": "Materials",
+   "Average Rating": 3.8,
+   "Price": 56.21
+ }
+]

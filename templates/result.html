@@ -1,0 +1,24 @@
+<html>
+<head></head>
+<body>
+	{% extends 'layout.html' %}
+	{% block content %}
+	<h3 class="bodytext">Showing X Results</h3>
+	<div>
+		<table class="results">
+			<tr>
+				<th>Item Name</th>
+				<th>Category</th>
+				<th>Average Rating</th>
+				<th>Price Range</th>
+			</tr>
+			<tr>
+				<td><a href="{{url_for('productDescription')}}">A shirt</a></td>
+				<td>Clothes</td>
+				<td>4.5</td>
+				<td>$10.00-$15.00</td>
+			</tr>
+		</table>
+	</div>
+	{% endblock %}
+</html>

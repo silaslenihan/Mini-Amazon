@@ -3,6 +3,22 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-
+	<div class="search">
+		<form action="{{url_for('search_results')}}" method="get" class="productSearch">
+			<label for="product">Find a product:</label>
+			<input type="text" id="product" name="product">
+			<input type="submit">
+		</form>
+	</div>
+	<div>
+		<p class="bodytext"><b>Products we think you'll like:</b></p>
+		<table class="recommends">
+			<tr>
+				<td>Product 1</td>
+				<td>Product 2</td>
+				<td>Product 3</td>
+			</tr>
+		</table>
+	</div>
 	{% endblock %}
 </html>
