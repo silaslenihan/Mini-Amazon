@@ -33,6 +33,7 @@ def root():
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
     search=request.args['product']
+    search.lower()
     database = "sampledata.json"
     data = json.loads(open(database).read())
     for x in data:
