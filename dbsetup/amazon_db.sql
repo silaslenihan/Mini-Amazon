@@ -45,28 +45,31 @@ PRIMARY KEY(order_id, item_id, cat_name));
 
 
 CREATE TABLE SellsItem
-(seller_username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Sellers(username),
-item_id  INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
-cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
+(seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
+item_id  INTEGER NOT NULL REFERENCES Items(item_id),
+cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
-stock INTEGER NOT NULL CHECK(stock >= 0));
+stock INTEGER NOT NULL CHECK(stock >= 0),
+PRIMARY KEY(seller_username, item_id, cat_name));
 
 
 CREATE TABLE Cart
-(item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
-cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
+(item_id INTEGER NOT NULL REFERENCES Items(item_id),
+cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 isPrime BOOLEAN NOT NULL,
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-totalPrice DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0));
+totalPrice DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0),
+PRIMARY KEY(item_id, cat_name));
 
 
 CREATE TABLE Items
-(item_id INTEGER NOT NULL PRIMARY KEY 
-cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
+(item_id INTEGER NOT NULL,
+cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 name VARCHAR (256) NOT NULL,
 avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
 rec_score DECIMAL(10, 2) NOT NULL CHECK(score >= 0),
-description VARCHAR(256) NOT NULL);
+description VARCHAR(256) NOT NULL,
+PRIMARY KEY(item_id, cat_name));
 
  --TODO: AVG rating? do we need to specify constraints, or 
 
