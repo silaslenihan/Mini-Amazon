@@ -29,7 +29,7 @@ def root():
     return render_template('home.html', placetaker =placetaker)
 
 @app.route('/results', methods=['GET', 'POST'])
-def search_results(search):
+def search_results():
     placetaker = ''
     return render_template('result.html', placetaker =placetaker)
 

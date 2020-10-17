@@ -8,6 +8,12 @@ body {
   margin: 0;
 }
 
+img {
+  width: 80%;
+  float: right;
+  margin-top:20px;
+}
+
 /* Header/logo Title */
 .header {
   padding: 10px;
@@ -94,6 +100,16 @@ body {
   display: block;
 }
 
+.search {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.recommends {
+  width: 100%;
+  text-align: center;
+}
 
 /* Footer */
 .footer {
@@ -105,11 +121,38 @@ body {
   bottom: 5px;
 }
 
-/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 700px) {
-  .row {   
-    flex-direction: column;
-  }
+.results{
+  border-collapse: collapse;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.results td, .results th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.results tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.bodytext {
+  margin-left: 20px;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
+
+.productSearch {
+  text-align: center;
+  margin-top: 20px;
 }
 
 /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
