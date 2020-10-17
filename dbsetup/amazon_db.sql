@@ -78,3 +78,15 @@ PRIMARY KEY(item_id, cat_name));
 CREATE TABLE Category
 (cat_name VARCHAR(256) NOT NULL PRIMARY KEY,
 description VARCHAR(256) NOT NULL);
+
+--TODO: RAISE EXCEPTIONS for following issues:
+	-- -prevent selling item or ordering items that have stock below 0
+	-- -make sure everything being purchased can be afforded - use balance to ensure not below 0
+	-- -possible check for similar item in other cats?
+	-- -multiple users with one username acting as seller?
+
+
+
+
+
+
