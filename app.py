@@ -30,6 +30,7 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
+    print(request.args['product'])
     placetaker = ''
     return render_template('result.html', placetaker =placetaker)
 
