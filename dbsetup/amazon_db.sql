@@ -19,7 +19,7 @@ CREATE TABLE Reviews
  item_id INTEGER NOT NULL REFERENCES Items(item_id),
  date_time DATE NOT NULL,
  content VARCHAR(256) NOT NULL,
- rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+ rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
  PRIMARY KEY(username,item_id,date_time));
 
 --TODO: make sure DATETIME in right format, is content long enough?
@@ -37,17 +37,18 @@ CREATE TABLE OrderHistory
  PRIMARY KEY(seller_username,order_id));
 
 CREATE TABLE OrderItems
-(order_id INTEGER NOT NULL PRIMARY KEY REFERENCES Orders(order_id),
-item_id INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
-cat_name VARCHAR(20) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
-quantity INTEGER NOT NULL CHECK(quantity >= 0));
+(order_id INTEGER NOT NULL REFERENCES Orders(order_id),
+item_id INTEGER NOT NULL REFERENCES Items(item_id),
+cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
+quantity INTEGER NOT NULL CHECK(quantity >= 0),
+PRIMARY KEY(order_id, item_id, cat_name));
 
 
 CREATE TABLE SellsItem
-(seller_username VARCHAR(20) NOT NULL PRIMARY KEY REFERENCES Sellers(username),
+(seller_username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Sellers(username),
 item_id  INTEGER NOT NULL PRIMARY KEY REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
-price FLOAT NOT NULL CHECK(price >= 0),
+price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
 stock INTEGER NOT NULL CHECK(stock >= 0));
 
 
@@ -56,18 +57,20 @@ CREATE TABLE Cart
 cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
 isPrime BOOLEAN NOT NULL,
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-totalPrice FLOAT NOT NULL CHECK(totalPrice >= 0));
+totalPrice DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0));
 
 
 CREATE TABLE Items
 (item_id INTEGER NOT NULL PRIMARY KEY 
 cat_name VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Category(cat_name),
 name VARCHAR (256) NOT NULL,
-avg_rate FLOAT NOT NULL CHECK(avg_rate >= 0),
-score INTEGER NOT NULL CHECK(score >= 0),
-image,
-description VARCHAR(256));
+avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
+rec_score DECIMAL(10, 2) NOT NULL CHECK(score >= 0),
+description VARCHAR(256) NOT NULL);
 
+ --TODO: AVG rating? do we need to specify constraints, or 
+
+--TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
 
 CREATE TABLE Category
 (cat_name VARCHAR(256) NOT NULL PRIMARY KEY,
