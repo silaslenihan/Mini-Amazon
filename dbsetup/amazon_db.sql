@@ -4,7 +4,8 @@ CREATE TABLE Users
  name VARCHAR(256) NOT NULL,
  email VARCHAR(256) NOT NULL,
  address VARCHAR(256) NOT NULL,
- balance INTEGER NOT NULL);
+ balance INTEGER NOT NULL,
+ isPrime BOOLEAN NOT NULL);
 
 --TODO: default balance to 0, make sure email and address are valid formats, make sure passwd fits constraints?
 
@@ -26,7 +27,7 @@ avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
 rec_score DECIMAL(10, 2) NOT NULL CHECK(rec_score >= 0),
 description VARCHAR(256) NOT NULL);
 
- --TODO: AVG rating? do we need to specify constraints, or 
+--TODO: AVG rating? do we need to specify constraints, or 
 
 --TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
 
@@ -36,7 +37,7 @@ CREATE TABLE Orders
  date_of_purchase DATE NOT NULL,
  date_of_delivery DATE NOT NULL);
 
-CREATE TABLE Reviews
+CREATE TABLE Reviews 
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
  item_id INTEGER NOT NULL REFERENCES Items(item_id),
  date_time DATE NOT NULL,
@@ -59,7 +60,6 @@ cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
 PRIMARY KEY(order_id, item_id, cat_name));
 
-
 CREATE TABLE SellsItem
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
 item_id  INTEGER NOT NULL REFERENCES Items(item_id),
@@ -68,14 +68,12 @@ price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
 stock INTEGER NOT NULL CHECK(stock >= 0),
 PRIMARY KEY(seller_username, item_id, cat_name));
 
-
 CREATE TABLE Cart
 (item_id INTEGER NOT NULL REFERENCES Items(item_id),
-cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
-isPrime BOOLEAN NOT NULL,
+username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-totalPrice DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0),
-PRIMARY KEY(item_id, cat_name));
+price_per_item DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0),
+PRIMARY KEY(username, item_id));
 
 
 --TODO: RAISE EXCEPTIONS for following issues:
@@ -84,7 +82,8 @@ PRIMARY KEY(item_id, cat_name));
 	-- -possible check for similar item in other cats?
 	-- -multiple users with one username acting as seller?
 
-
+CREATE VIEW CartSummary AS 
+SELECT C.username as username, SUM(C.quantity*C.price_per_item), COUNT(C.quantity) FROM Cart C GROUP BY C.username;
 
 
 
