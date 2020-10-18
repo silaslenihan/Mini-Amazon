@@ -4,7 +4,7 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 	<div class="search">
-		<form action="{{url_for('search_results')}}" method="get" class="productSearch">
+		<form action="{{url_for('search_results')}}" method="GET" class="productSearch">
 			<label for="product">Find a product:</label>
 			<input type="text" id="product" name="product">
 			<input type="submit">
