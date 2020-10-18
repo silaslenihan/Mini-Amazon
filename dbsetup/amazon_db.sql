@@ -58,7 +58,7 @@ CREATE TABLE OrderItems
 item_id INTEGER NOT NULL REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-PRIMARY KEY(order_id, item_id, cat_name));
+PRIMARY KEY(order_id, item_id));
 
 CREATE TABLE SellsItem
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
@@ -66,7 +66,7 @@ item_id  INTEGER NOT NULL REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
 stock INTEGER NOT NULL CHECK(stock >= 0),
-PRIMARY KEY(seller_username, item_id, cat_name));
+PRIMARY KEY(seller_username, item_id));
 
 CREATE TABLE Cart
 (item_id INTEGER NOT NULL REFERENCES Items(item_id),
@@ -75,6 +75,7 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 PRIMARY KEY(username, item_id));
 
+--TODO: triggers for when loading db, auto fill who sells what and orders what upon trying to insert orders or reviews and whatnot?
 
 --TODO: RAISE EXCEPTIONS for following issues:
 	-- -prevent selling item or ordering items that have stock below 0
