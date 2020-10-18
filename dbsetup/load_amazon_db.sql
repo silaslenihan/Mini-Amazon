@@ -17,3 +17,10 @@ INSERT INTO Users VALUES('janedoe','pass1234','Jane Doe', 'jadoe1@gmail.com','2 
 INSERT INTO Users VALUES('mikey2','pass1234','Michael', 'mike@gmail.com','3 Main St, Durham, NC', 5000, True);
 INSERT INTO Users VALUES('sarah1','pass1234','Sarah', 'sarah@gmail.com','4 Main St, Durham, NC', 2000, True);
 INSERT INTO Users VALUES('evan7','pass1234','Evan', 'evan@gmail.com','5 Main St, Durham, NC', 700, True);
+
+INSERT INTO Buyers VALUES('johndoe');
+INSERT INTO Buyers VALUES('mikey2');
+INSERT INTO Buyers VALUES('sarah1');
+
+INSERT INTO Sellers VALUES('evan7');
+INSERT INTO Sellers VALUES('janedoe');
