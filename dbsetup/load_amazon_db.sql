@@ -1,0 +1,10 @@
+INSERT INTO Items VALUES(1, 'Media', 'Friends: Season 1', 4.8, 0, 'Season 1 of popular tv show friends.');
+INSERT INTO Items VALUES(2, 'Clothing', 'Banana Republic T-Shirt', 4.1, 0, 'grey tshirt from banana republic.');
+INSERT INTO Items VALUES(3, 'Media', 'Friends: Season 2', 4.5, 0, 'Season 2 of popular tv show friends.');
+INSERT INTO Items VALUES(4, 'Media', 'White Collar: Season 3', 3.9, 0, 'Season 3 of popular tv show white collar.');
+INSERT INTO Items VALUES(5, 'Media', 'Prison Break: Season 2', 4.2, 0, 'Season 2 of popular tv show prison break.');
+INSERT INTO Items VALUES(6, 'Clothing', 'J-Crew T-Shirt', 4.2, 0, 'white tshirt from j crew.');
+INSERT INTO Items VALUES(7, 'Clothing', 'Lucky Brand Jeans', 3.7, 0, 'Soft, light jeans from lucky brand.');
+INSERT INTO Items VALUES(8, 'Clothing', 'Nike Running Shoes', 4.3, 0, 'white and yellow, lightweight running sneakers.');
+INSERT INTO Items VALUES(9, 'Clothing', 'Nike Ankle Socks', 4.0, 0, 'Soft, white ankle length socks.');
+INSERT INTO Items VALUES(10, 'Media', 'Lost: Season 1', 4.4, 0, 'Season 1 of popular tv show lost.');

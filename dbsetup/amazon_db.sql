@@ -83,7 +83,7 @@ PRIMARY KEY(username, item_id));
 	-- -multiple users with one username acting as seller?
 
 CREATE VIEW CartSummary AS 
-SELECT C.username as username, SUM(C.quantity*C.price_per_item), COUNT(C.quantity) FROM Cart C GROUP BY C.username;
+SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username;
 
 
 
