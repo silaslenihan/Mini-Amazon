@@ -46,3 +46,13 @@ INSERT INTO Orders VALUES(18,27.50,2020-03-10,2020-03-12);
 INSERT INTO Orders VALUES(19,199.99,2020-01-01,2020-02-01);
 INSERT INTO Orders VALUES(20,10.50,2020-03-10,2020-03-12);
 
+INSERT INTO Reviews VALUES('johndoe',1,2019-03-04,'This is cool!',4.5);
+INSERT INTO Reviews VALUES('mikey2',1,2019-03-04,'This is cool!',4.4);
+INSERT INTO Reviews VALUES('johndoe',2,2019-03-04,'This is cool!',4.4);
+INSERT INTO Reviews VALUES('johndoe',2,2019-03-04,'This is cool!',5.0);
+INSERT INTO Reviews VALUES('mikey2',3,2019-03-04,'This is cool!',4.8);
+INSERT INTO Reviews VALUES('johndoe',3,2019-03-04,'This is cool!',3.3);
+INSERT INTO Reviews VALUES('johndoe',3,2019-03-04,'This is cool!',4.4);
+INSERT INTO Reviews VALUES('sarah1',7,2019-03-04,'This is cool!',4.9);
+INSERT INTO Reviews VALUES('sarah1',7,2019-03-04,'This is cool!',4.2);
+INSERT INTO Reviews VALUES('mikey2',6,2019-03-04,'This is cool!',4.1);

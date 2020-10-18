@@ -27,7 +27,7 @@ avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
 rec_score DECIMAL(10, 2) NOT NULL CHECK(rec_score >= 0),
 description VARCHAR(256) NOT NULL);
 
---TODO: AVG rating? do we need to specify constraints, or 
+--TODO: AVG rating? do we need to specify constraints, or? what is rec score and how do we calc it?
 
 --TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
 
@@ -75,13 +75,14 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 PRIMARY KEY(username, item_id));
 
---TODO: triggers for when loading db, auto fill who sells what and orders what upon trying to insert orders or reviews and whatnot?
+--TODO: triggers for when loading db, auto fill who sells what and orders what upon trying to insert orders or reviews and whatnot? Added reviews should modify items avg rating
 
 --TODO: RAISE EXCEPTIONS for following issues:
 	-- -prevent selling item or ordering items that have stock below 0
 	-- -make sure everything being purchased can be afforded - use balance to ensure not below 0
 	-- -possible check for similar item in other cats?
 	-- -multiple users with one username acting as seller?
+	-- -seller of item cannot review it
 
 CREATE VIEW CartSummary AS 
 SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username;
