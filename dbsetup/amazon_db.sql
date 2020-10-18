@@ -14,6 +14,28 @@ CREATE TABLE Sellers
 CREATE TABLE Buyers
 (username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
 
+CREATE TABLE Category
+(cat_name VARCHAR(256) NOT NULL PRIMARY KEY,
+description VARCHAR(256) NOT NULL);
+
+CREATE TABLE Items
+(item_id INTEGER NOT NULL PRIMARY KEY,
+cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
+name VARCHAR (256) NOT NULL,
+avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
+rec_score DECIMAL(10, 2) NOT NULL CHECK(rec_score >= 0),
+description VARCHAR(256) NOT NULL);
+
+ --TODO: AVG rating? do we need to specify constraints, or 
+
+--TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
+
+CREATE TABLE Orders
+(order_id INTEGER NOT NULL PRIMARY KEY,
+ payment_amount DECIMAL(10, 2) NOT NULL,
+ date_of_purchase DATE NOT NULL,
+ date_of_delivery DATE NOT NULL);
+
 CREATE TABLE Reviews
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
  item_id INTEGER NOT NULL REFERENCES Items(item_id),
@@ -23,12 +45,6 @@ CREATE TABLE Reviews
  PRIMARY KEY(username,item_id,date_time));
 
 --TODO: make sure DATETIME in right format, is content long enough?
-
-CREATE TABLE Orders
-(order_id INTEGER NOT NULL PRIMARY KEY,
- payment_amount DECIMAL(10, 2) NOT NULL,
- date_of_purchase DATE NOT NULL,
- date_of_delivery DATE NOT NULL);
 
 CREATE TABLE OrderHistory
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
@@ -61,23 +77,6 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 totalPrice DECIMAL(10, 2) NOT NULL CHECK(totalPrice >= 0),
 PRIMARY KEY(item_id, cat_name));
 
-
-CREATE TABLE Items
-(item_id INTEGER NOT NULL,
-cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
-name VARCHAR (256) NOT NULL,
-avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
-rec_score DECIMAL(10, 2) NOT NULL CHECK(score >= 0),
-description VARCHAR(256) NOT NULL,
-PRIMARY KEY(item_id, cat_name));
-
- --TODO: AVG rating? do we need to specify constraints, or 
-
---TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
-
-CREATE TABLE Category
-(cat_name VARCHAR(256) NOT NULL PRIMARY KEY,
-description VARCHAR(256) NOT NULL);
 
 --TODO: RAISE EXCEPTIONS for following issues:
 	-- -prevent selling item or ordering items that have stock below 0
