@@ -4,7 +4,7 @@ CREATE TABLE Users
  name VARCHAR(256) NOT NULL,
  email VARCHAR(256) NOT NULL,
  address VARCHAR(256) NOT NULL,
- balance INTEGER NOT NULL,
+ balance DECIMAL(10,2) NOT NULL,
  isPrime BOOLEAN NOT NULL);
 
 --TODO: default balance to 0, make sure email and address are valid formats, make sure passwd fits constraints?
