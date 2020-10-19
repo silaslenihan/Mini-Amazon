@@ -59,66 +59,66 @@ INSERT INTO Reviews VALUES('sarah1',6,'2020-04-04','This is cool!',4.9);
 INSERT INTO Reviews VALUES('sarah1',5,'2020-04-04','This is cool!',4.2);
 INSERT INTO Reviews VALUES('mikey2',8,'2020-04-04','This is cool!',4.1);
 
-INSERT INTO OrderHistory VALUES('evan7', 1, 'johndoe')
-INSERT INTO OrderHistory VALUES('evan7', 2, 'mikey2')
-INSERT INTO OrderHistory VALUES('evan7', 3, 'sarah1')
-INSERT INTO OrderHistory VALUES('evan7', 4, 'johndoe')
-INSERT INTO OrderHistory VALUES('evan7', 5, 'mikey2')
-INSERT INTO OrderHistory VALUES('evan7', 6, 'sarah1')
-INSERT INTO OrderHistory VALUES('evan7', 7, 'johndoe')
-INSERT INTO OrderHistory VALUES('evan7', 8, 'mikey2')
-INSERT INTO OrderHistory VALUES('evan7', 9, 'sarah1')
-INSERT INTO OrderHistory VALUES('evan7', 10, 'johndoe')
-INSERT INTO OrderHistory VALUES('janedoe', 11, 'mikey2')
-INSERT INTO OrderHistory VALUES('janedoe', 12, 'sarah1')
-INSERT INTO OrderHistory VALUES('janedoe', 13, 'johndoe')
-INSERT INTO OrderHistory VALUES('janedoe', 14, 'mikey2')
-INSERT INTO OrderHistory VALUES('janedoe', 15, 'sarah1')
-INSERT INTO OrderHistory VALUES('janedoe', 16, 'johndoe')
-INSERT INTO OrderHistory VALUES('janedoe', 17, 'mikey2')
-INSERT INTO OrderHistory VALUES('janedoe', 18, 'sarah1')
-INSERT INTO OrderHistory VALUES('janedoe', 19, 'johndoe')
-INSERT INTO OrderHistory VALUES('janedoe', 20, 'mikey2')
+INSERT INTO OrderHistory VALUES('evan7', 1, 'johndoe');
+INSERT INTO OrderHistory VALUES('evan7', 2, 'mikey2');
+INSERT INTO OrderHistory VALUES('evan7', 3, 'sarah1');
+INSERT INTO OrderHistory VALUES('evan7', 4, 'johndoe');
+INSERT INTO OrderHistory VALUES('evan7', 5, 'mikey2');
+INSERT INTO OrderHistory VALUES('evan7', 6, 'sarah1');
+INSERT INTO OrderHistory VALUES('evan7', 7, 'johndoe');
+INSERT INTO OrderHistory VALUES('evan7', 8, 'mikey2');
+INSERT INTO OrderHistory VALUES('evan7', 9, 'sarah1');
+INSERT INTO OrderHistory VALUES('evan7', 10, 'johndoe');
+INSERT INTO OrderHistory VALUES('janedoe', 11, 'mikey2');
+INSERT INTO OrderHistory VALUES('janedoe', 12, 'sarah1');
+INSERT INTO OrderHistory VALUES('janedoe', 13, 'johndoe');
+INSERT INTO OrderHistory VALUES('janedoe', 14, 'mikey2');
+INSERT INTO OrderHistory VALUES('janedoe', 15, 'sarah1');
+INSERT INTO OrderHistory VALUES('janedoe', 16, 'johndoe');
+INSERT INTO OrderHistory VALUES('janedoe', 17, 'mikey2');
+INSERT INTO OrderHistory VALUES('janedoe', 18, 'sarah1');
+INSERT INTO OrderHistory VALUES('janedoe', 19, 'johndoe');
+INSERT INTO OrderHistory VALUES('janedoe', 20, 'mikey2');
 
-INSERT INTO OrderItems VALUES(1,1,'Media',1)
-INSERT INTO OrderItems VALUES(2,2,'Clothing',1)
-INSERT INTO OrderItems VALUES(3,3,'Media',1)
-INSERT INTO OrderItems VALUES(4,4,'Media',1)
-INSERT INTO OrderItems VALUES(5,5,'Media',1)
-INSERT INTO OrderItems VALUES(6,6,'Clothing',1)
-INSERT INTO OrderItems VALUES(7,7,'Clothing',1)
-INSERT INTO OrderItems VALUES(8,8,'Clothing',1)
-INSERT INTO OrderItems VALUES(9,9,'Clothing',1)
-INSERT INTO OrderItems VALUES(10,10,'Media',1)
-INSERT INTO OrderItems VALUES(11,1,'Media',1)
-INSERT INTO OrderItems VALUES(12,2,'Clothing',1)
-INSERT INTO OrderItems VALUES(13,3,'Media',1)
-INSERT INTO OrderItems VALUES(14,4,'Media',1)
-INSERT INTO OrderItems VALUES(15,5,'Media',1)
-INSERT INTO OrderItems VALUES(16,6,'Clothing',1)
-INSERT INTO OrderItems VALUES(17,7,'Clothing',1)
-INSERT INTO OrderItems VALUES(18,8,'Clothing',1)
-INSERT INTO OrderItems VALUES(19,9,'Clothing',1)
-INSERT INTO OrderItems VALUES(20,10,'Media',1)
+INSERT INTO OrderItems VALUES(1,1,'Media',1);
+INSERT INTO OrderItems VALUES(2,2,'Clothing',1);
+INSERT INTO OrderItems VALUES(3,3,'Media',1);
+INSERT INTO OrderItems VALUES(4,4,'Media',1);
+INSERT INTO OrderItems VALUES(5,5,'Media',1);
+INSERT INTO OrderItems VALUES(6,6,'Clothing',1);
+INSERT INTO OrderItems VALUES(7,7,'Clothing',1);
+INSERT INTO OrderItems VALUES(8,8,'Clothing',1);
+INSERT INTO OrderItems VALUES(9,9,'Clothing',1);
+INSERT INTO OrderItems VALUES(10,10,'Media',1);
+INSERT INTO OrderItems VALUES(11,1,'Media',1);
+INSERT INTO OrderItems VALUES(12,2,'Clothing',1);
+INSERT INTO OrderItems VALUES(13,3,'Media',1);
+INSERT INTO OrderItems VALUES(14,4,'Media',1);
+INSERT INTO OrderItems VALUES(15,5,'Media',1);
+INSERT INTO OrderItems VALUES(16,6,'Clothing',1);
+INSERT INTO OrderItems VALUES(17,7,'Clothing',1);
+INSERT INTO OrderItems VALUES(18,8,'Clothing',1);
+INSERT INTO OrderItems VALUES(19,9,'Clothing',1);
+INSERT INTO OrderItems VALUES(20,10,'Media',1);
 
-INSERT INTO SellsItem VALUES('evan7', 1, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 2, 'Clothing', 17.50, 10)
-INSERT INTO SellsItem VALUES('evan7', 3, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 4, 'Media', 17.50, 10)
-INSERT INTO SellsItem VALUES('evan7', 5, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 6, 'Clothing', 19.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 7, 'Clothing', 19.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 8, 'Clothing', 13.29, 10)
-INSERT INTO SellsItem VALUES('evan7', 9, 'Clothing', 17.99, 10)
-INSERT INTO SellsItem VALUES('evan7', 10, 'Media', 88.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 1, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 2, 'Clothing', 17.50, 10)
-INSERT INTO SellsItem VALUES('janedoe', 3, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 4, 'Media', 17.50, 10)
-INSERT INTO SellsItem VALUES('janedoe', 5, 'Media', 19.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 6, 'Clothing', 19.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 7, 'Clothing', 19.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 8, 'Clothing', 13.29, 10)
-INSERT INTO SellsItem VALUES('janedoe', 9, 'Clothing', 17.99, 10)
-INSERT INTO SellsItem VALUES('janedoe', 10, 'Media', 88.99, 10)
+INSERT INTO SellsItem VALUES('evan7', 1, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 2, 'Clothing', 17.50, 10);
+INSERT INTO SellsItem VALUES('evan7', 3, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 4, 'Media', 17.50, 10);
+INSERT INTO SellsItem VALUES('evan7', 5, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 6, 'Clothing', 19.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 7, 'Clothing', 19.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 8, 'Clothing', 13.29, 10);
+INSERT INTO SellsItem VALUES('evan7', 9, 'Clothing', 17.99, 10);
+INSERT INTO SellsItem VALUES('evan7', 10, 'Media', 88.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 1, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 2, 'Clothing', 17.50, 10);
+INSERT INTO SellsItem VALUES('janedoe', 3, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 4, 'Media', 17.50, 10);
+INSERT INTO SellsItem VALUES('janedoe', 5, 'Media', 19.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 6, 'Clothing', 19.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 7, 'Clothing', 19.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 8, 'Clothing', 13.29, 10);
+INSERT INTO SellsItem VALUES('janedoe', 9, 'Clothing', 17.99, 10);
+INSERT INTO SellsItem VALUES('janedoe', 10, 'Media', 88.99, 10);
 
