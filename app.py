@@ -44,10 +44,10 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
-    search=request.args['product']
+    search=request.args['product'].lower()
     database = "sampledata.json"
     cur = conn.cursor()
-    query="SELECT * FROM items WHERE cat_name='" +str(search)+"';"
+    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"
     cur.execute(query)
     version = cur.fetchall()
 
@@ -62,6 +62,16 @@ def search_results():
         data_row['cateogry'] = row[1]
         data_row['rating'] = row[3]
         data.append(data_row)
+    data=[]
+    for row in version:
+        data_row = {}
+        data_row['item_id'] = row[0]
+        data_row['name'] = row[2]
+        data_row['category'] = row[1]
+        data_row['rating'] = row[3]
+        data.append(data_row)
+    print(data)
+
     placetaker = ''
     return render_template('result.html', items=data)
 
