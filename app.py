@@ -39,8 +39,19 @@ def getLoginDetails():
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
-    placetaker = ''
-    return render_template('home.html', placetaker =placetaker)
+    cur = conn.cursor()
+    query = "SELECT item_id, name, avg_rate FROM ITEMS ORDER by avg_rate desc LIMIT 3;"
+    cur.execute(query)
+    results = cur.fetchall()
+    items = []
+    for result in results:
+        items.append({
+            "item_id": result[0],
+            "item_name": result[1],
+            "avg_rate": result[2]
+            })
+    print(items)
+    return render_template('home.html', items =items)
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
