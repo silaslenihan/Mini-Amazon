@@ -5,19 +5,38 @@
 	{% block content %}
 	<div class="search">
 		<form action="{{url_for('search_results')}}" method="GET" class="productSearch">
-			<label for="product">Find a product:</label>
+			<label for="product"><b>Find a product:</b></label>
 			<input type="text" id="product" name="product">
 			<input type="submit">
 		</form>
 	</div>
 	<div>
-		<p class="bodytext"><b>Products we think you'll like:</b></p>
+		<h3 class="bodytext">Products we think you'll like:</h3>
 		<table class="recommends">
 			<tr>
-				<td>Product 1</td>
-				<td>Product 2</td>
-				<td>Product 3</td>
+				{% for item in items %} 
+				<td>
+					<table style="text-align: center">
+						<tr>
+							<td>
+								<img src="../static/images/default-img.gif" alt="Default product image"style="float:center">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<h3><a href="{{url_for('productDescription', itemid=item.item_id)}}">{{item.item_name}} </a></h3>
+							</td>
+						</tr>
+						<tr>
+							<td>		
+								<p>{{item.avg_rate}} Stars </p>
+							</td>
+						</tr>
+					</table>
+			</td>
+				{% endfor %}
 			</tr>
+
 		</table>
 	</div>
 	{% endblock %}

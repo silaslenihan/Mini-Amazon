@@ -5,15 +5,41 @@
 	{% block content %}
 	<div class="row">
   		<div class="column" style="margin-right:20px">
-  			<img src="../static/images/default-img.gif" alt="Default product image">
+  			<img src="../static/images/default-img.gif" alt="Default product image" class="productImage">
   		</div>
   		<div class="column" style="margin-left:5px">
-  			<h2>A shirt</h2>
-  			<h4>The description</h4>
-  			<p>4.5/5 Stars</p>
-  			<p style="text-align:center"><i>List of sellers with add to cart option would go here</i></p>
+  			<h2>{{data.item_name}}</h2>
+  			<h4>{{data.description}}</h4>
+  			<p>{{data.rating}} Stars</p>
+  			<table class="results">
+  				<tr>
+  					<th>Seller</th>
+  					<th>Price</th>
+  					<th>Select Quantity</th>
+  					<th>Add to Cart</th>
+				</tr>
+  				{% for seller in data.sellers_list %}
+  				<tr>
+  					<td>{{seller}}</td>
+  					<td><i>TODO</i></td>
+  					<td><i>TODO</i></td>
+  					<td><i>TODO</i></td>
+  				</tr>
+  				{% endfor %}
+  			</table>
   		</div>
 	</div>
-	<p style="text-align:center"><i>List of reviews would go here</i></p>
+	<h3 class="bodytext">Reviews</h3>
+	<table class="results">
+		{% for review in data.reviews_list %}
+		<tr>
+			<td>{{review.username}} </td>
+			<td>{{review.rating}} Stars </td>
+			<td>{{review.content}} </td>
+		</tr>
+
+		{% endfor %}
+	</table>
+	<br><br>
 	{% endblock %}
 </html>

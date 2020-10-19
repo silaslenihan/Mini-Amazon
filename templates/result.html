@@ -3,21 +3,26 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-	<h3 class="bodytext">Showing X Results</h3>
+	<h3 class="bodytext">Showing {{item|length}} Result(s)</h3>
 	<div>
 		<table class="results">
+			
 			<tr>
 				<th>Item Name</th>
 				<th>Category</th>
 				<th>Average Rating</th>
 				<th>Price Range</th>
 			</tr>
+			{% for singleItem in item %}
 			<tr>
-				<td><a href="{{url_for('productDescription', itemid=1)}}">A shirt</a></td>
-				<td>Clothes</td>
-				<td>4.5</td>
-				<td>$10.00-$15.00</td>
+				<td>
+					<a href="{{url_for('productDescription', itemid=singleItem.item_id)}}">{{singleItem.name}}</a>
+				</td>
+				<td>{{singleItem.category}}</td>
+				<td>{{singleItem.rating}}</td>
+				<td><i>TODO</i></td>
 			</tr>
+			{% endfor %}
 		</table>
 	</div>
 	{% endblock %}
