@@ -52,15 +52,12 @@ def search_results():
     version = cur.fetchall()
     data = []
     for row in version:
-        print(row)
         data_row = {}
         data_row['item_id'] = row[0]
         data_row['name'] = row[2]
         data_row['cateogry'] = row[1]
         data_row['rating'] = row[3]
-        print(data_row)
         data.append(data_row)
-    #print(data)
     placetaker = ''
     return render_template('result.html', items=data)
 
