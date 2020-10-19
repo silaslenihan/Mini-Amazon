@@ -50,10 +50,10 @@ def search_results():
     query="SELECT * FROM items WHERE cat_name='" +str(search)+"';"
     cur.execute(query)
     version = cur.fetchall()
-<<<<<<< HEAD
+
     for row in version:
         print(row)
-=======
+
     data = []
     for row in version:
         data_row = {}
@@ -62,7 +62,6 @@ def search_results():
         data_row['cateogry'] = row[1]
         data_row['rating'] = row[3]
         data.append(data_row)
->>>>>>> b7c5f9a85a0c9d412674db3f616d04893a4e2528
     placetaker = ''
     return render_template('result.html', items=data)
 
