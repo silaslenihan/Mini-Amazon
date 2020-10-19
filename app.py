@@ -50,18 +50,6 @@ def search_results():
     query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"
     cur.execute(query)
     version = cur.fetchall()
-
-    for row in version:
-        print(row)
-
-    data = []
-    for row in version:
-        data_row = {}
-        data_row['item_id'] = row[0]
-        data_row['name'] = row[2]
-        data_row['cateogry'] = row[1]
-        data_row['rating'] = row[3]
-        data.append(data_row)
     data=[]
     for row in version:
         data_row = {}
@@ -71,9 +59,9 @@ def search_results():
         data_row['rating'] = row[3]
         data.append(data_row)
     print(data)
-
     placetaker = ''
-    return render_template('result.html', items=data)
+    return render_template('result.html', placetaker =placetaker)
+
 
 @app.route("/add")
 def admin():
