@@ -45,7 +45,6 @@ def root():
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
     search=request.args['product'].lower()
-    database = "sampledata.json"
     cur = conn.cursor()
     query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"
     cur.execute(query)
@@ -59,8 +58,7 @@ def search_results():
         data_row['rating'] = row[3]
         data.append(data_row)
     print(data)
-    placetaker = ''
-    return render_template('result.html', placetaker =placetaker)
+    return render_template('result.html', item = data)
 
 
 @app.route("/add")
