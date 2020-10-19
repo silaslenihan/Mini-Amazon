@@ -4,6 +4,16 @@ from werkzeug.utils import secure_filename
 #from form import ItemSearchForm
 import json
 import os
+import psycopg2
+
+conn = psycopg2.connect(
+user="lzjtguuz",
+password="uR_ejvF_D_y0ZmPVoNezR3Md0uzZfrRP",
+host="salt.db.elephantsql.com",
+port="5432"
+)
+cur = conn.cursor()
+
 
 app = Flask(__name__)
 app.secret_key = 'random string'
@@ -11,12 +21,14 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+
+
 # all of the following method are required to be implemented
 # there will be some function not included but required to be done
 # follow the project description for detail
 
 # my implementation is based on sqlite3, you are free to change it to sqlAlchemy
-#guy
 
 def getLoginDetails():
     with sqlite3.connect('database.db') as conn:
@@ -32,15 +44,14 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
-    search=request.args['product'].lower()
+    search=request.args['product']
     database = "sampledata.json"
-    data = json.loads(open(database).read())
-    for x in data:
-        if search in x['Item Name'].lower():
-            print(x['Item Name'])
-            print(x['Category'])
-            print(x['Average Rating'])
-            print(x['Price'])
+    cur = conn.cursor()
+    query="SELECT * FROM items WHERE cat_name='" +str(search)+"';"
+    cur.execute(query)
+    version = cur.fetchall()
+    for row in version:
+        print(row)
     placetaker = ''
     return render_template('result.html', placetaker =placetaker)
 
