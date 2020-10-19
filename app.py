@@ -63,6 +63,53 @@ def search_results():
     return render_template('result.html', placetaker =placetaker)
 
 
+@app.route("/productDescription", methods=['GET', 'POST'])
+def productDescription():
+    placetaker = ''
+    item_id = request.args['itemid']
+    cur = conn.cursor()
+    # get matching item from db
+    query1 = f"SELECT * FROM Items WHERE item_id = {item_id}"
+    cur.execute(query1)
+    results1 = cur.fetchall()[0]
+    # get parameters we need for product page
+    name = results1[2]
+    description = results1[5]
+    rating = results1[3]
+    # get matching sellers from db
+    query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id}"
+    cur.execute(query2)
+    results2 = cur.fetchall()
+    # get list of sellers who sell that item
+    seller_list = []
+    for result in results2:
+        seller_list.append(result[0])
+    # get matching reviews from db
+    query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id}"
+    cur.execute(query3)
+    results3 = cur.fetchall()
+    # get list of reviews about that item
+    reviews_list = []
+    for result in results3:
+        review = {}
+        review['username'] = result[0]
+        review['item_id'] = result[1]
+        review['date_time'] = result[2]
+        review['content'] = result[3]
+        review['rating'] = result[4]
+        reviews_list.append(review)
+
+    data = {
+        "item_name": name,
+        "description": description,
+        "rating": rating,
+        "sellers_list": seller_list,
+        "reviews_list": reviews_list
+    }
+    print(data)
+
+    return render_template("productDescription.html", data =data)
+
 @app.route("/add")
 def admin():
     placetaker = ''
@@ -120,10 +167,6 @@ def login():
         error = 'Invalid UserId / Password'
         return render_template('login.html', error=error)
 
-@app.route("/productDescription", methods=['GET', 'POST'])
-def productDescription():
-    placetaker = ''
-    return render_template("productDescription.html", placetaker =placetaker)
 
 @app.route("/addToCart")
 def addToCart():
