@@ -63,6 +63,23 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 PRIMARY KEY(username, item_id));
 
+
+CREATE FUNCTION TF_Modify_buyer_balance_on_order() RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE Users
+  SET balance = balance - NEW.payment_amount
+  WHERE username = NEW.buyer_username;
+
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_Modify_buyer_balance_on_order
+  AFTER INSERT ON Orders
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_Modify_buyer_balance_on_order();
+
+
 CREATE VIEW CartSummary AS 
 SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username;
 
