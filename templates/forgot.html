@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Sahara</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/css/style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="../static/javascript/common.js"></script>
+</head>
+<body>
+<div class="header">
+  <h1>Sahara</h1>
+  <p>Like Amazon, but without the bugs</p>
+</div>
+
+<div class="container">
+      <h3>Please enter your username:</h3>
+        <form action="" method="post">
+        <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+            <br>
+            <h3>What is the name of your childhood best friend? **enter the email you used for now**</h3>
+        <input type="text" placeholder="Answer" name="answer" value="{{
+          request.form.answer }}">
+        <input class="btn btn-default" type="submit" value="Get Password">
+      </form>
+    {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
+    {% if correct %}
+        <p class="correct"><strong>Your answer is correct, here is your password:</strong> {{ correct }}
+      {% endif %}
+</div>
+<div class="container">
+      <h3>Back to login page:</h3>
+        <form action="{{url_for('login')}}" method="get">
+        <input class="btn btn-default" type="submit" value="Login page">
+      </form>
+</div>
+<div class="footer">
+  <h3>A CS316 Project</h3>
+</div>
+</body>
+</html>

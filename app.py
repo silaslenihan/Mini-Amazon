@@ -6,6 +6,7 @@ import json
 import os
 import psycopg2
 
+
 conn = psycopg2.connect(
 user="lzjtguuz",
 password="uR_ejvF_D_y0ZmPVoNezR3Md0uzZfrRP",
@@ -39,6 +40,7 @@ def getLoginDetails():
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
+    # Need to adjust how average rating is calculated
     cur = conn.cursor()
     query = "SELECT item_id, name, avg_rate FROM ITEMS ORDER by avg_rate desc LIMIT 3;"
     cur.execute(query)
@@ -55,9 +57,12 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
+    # Fix for SQL injection attack prevention
     search=request.args['product'].lower()
+    search="'%"+str(search)+"%'"
     cur = conn.cursor()
-    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"
+    #Prevent SQL injection
+    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE %s OR LOWER (name) LIKE %s;" % (search, search)
     cur.execute(query)
     version = cur.fetchall()
     data=[]
@@ -74,6 +79,8 @@ def search_results():
 
 @app.route("/productDescription", methods=['GET', 'POST'])
 def productDescription():
+    # Make sure this still aligns with updated rating method
+
     placetaker = ''
     item_id = request.args['itemid']
     cur = conn.cursor()
@@ -120,96 +127,238 @@ def productDescription():
     return render_template("productDescription.html", data =data)
 
 @app.route("/add")
-def admin():
+def add():
+    # Probably not necessary
+
     placetaker = ''
     return render_template('add.html', placetaker =placetaker)
 
 @app.route("/addItem", methods=["GET", "POST"])
 def addItem():
+    # Seller adds a new product to sell, this will involve INSERT into the items table,
+    # Check whether the product is already sold
+
     print(msg)
     return redirect(url_for('root'))
 
 @app.route("/remove")
 def remove():
+    # Maybe not necessary
     data = ''
     return render_template('remove.html', data=data)
 
 @app.route("/removeItem")
 def removeItem():
+    # Seller removes item, no longer wants to sell it
+
     print(msg)
     return redirect(url_for('root'))
 
 @app.route("/displayCategory")
 def displayCategory():
+    # View all items in the same category as the current item
+
     placetaker = ''
     return render_template('displayCategory.html', placetaker =placetaker)
 
 @app.route("/account/profile")
 def profileHome():
+    # Depends on buyer or seller user
+    # Show order history or show items for sale
+
     placetaker = ''
     return render_template("profileHome.html", placetaker =placetaker)
 
 @app.route("/account/profile/edit")
 def editProfile():
+    # Probably not
+
     placetaker = ''
     return render_template("editProfile.html", placetaker =placetaker)
 
 @app.route("/account/profile/changePassword", methods=["GET", "POST"])
 def changePassword():
+    # Come back
+
     placetaker = ''
     return render_template("changePassword.html", placetaker =placetaker)
 
 @app.route("/updateProfile", methods=["GET", "POST"])
 def updateProfile():
+    # Come back
+
     return redirect(url_for('editProfile'))
 
 @app.route("/loginForm")
 def loginForm():
+    # Come back
+
     return render_template('login.html', error='')
 
-@app.route("/login", methods = ['POST', 'GET'])
+@app.route("/login", methods = ['GET', 'POST'])
 def login():
-    if True:
-
-        return redirect(url_for('root'))
-    else:
-        error = 'Invalid UserId / Password'
-        return render_template('login.html', error=error)
-
+    error=None
+    if request.method == 'POST':
+        user = str(request.form['username'])
+        passwrd = str(request.form['password'])
+        user = "'"+str(user)+"'"
+        passwrd = "'"+str(passwrd)+"'"
+        cur = conn.cursor()
+        query = "SELECT * FROM Users WHERE username = %s AND password = %s;" % (user, passwrd)
+        cur.execute(query)
+        version = cur.fetchall()
+        if len(version) == 0:
+            error = 'Invalid Username / Password'
+        else:
+            return redirect(url_for('root'))
+    return render_template('login.html', error=error)
 
 @app.route("/addToCart")
 def addToCart():
+    # Add item_id to user's cart based on their userID
+    # One user can only have one cart at a time
+
     print('')
     return redirect(url_for('root'))
 
 @app.route("/cart", methods=['GET', 'POST'])
 def cart():
+    # Simply select all the items in a user's cart and display them
+
     placetaker = ''
     return render_template("cart.html", placetaker =placetaker)
 
 @app.route("/removeFromCart")
 def removeFromCart():
+    # REMOVE item_id from user's cart based on their username
+    # How do we get username?
 
     return redirect(url_for('root'))
+
+
+@app.route("/purchase", methods=['GET', 'POST'])
+def purchase():
+    return render_template("reviews.html", error=msg)
 
 @app.route("/logout")
 def logout():
+    # Need to figure this out
 
     return redirect(url_for('root'))
 
-def is_valid(email, password):
-    if True:
+def pass_valid(p1, p2):
+    if p1 == p2:
         return True
     return False
 
-@app.route("/register", methods = ['GET', 'POST'])
-def register():
-    msg = ''
-    return render_template("login.html", error=msg)
+@app.route("/addreview", methods = ['GET', 'POST'])
+def addreview():
 
-@app.route("/registerationForm")
+
+    return render_template("reviews.html", error=msg)
+
+
+@app.route("/addbalance", methods=['GET', 'POST'])
+def addbalance():
+    return render_template("reviews.html", error=msg)
+
+
+@app.route("/showaverage", methods=['GET', 'POST'])
+def showaverage():
+    return render_template("reviews.html", error=msg)
+
+
+@app.route("/forgot", methods = ['GET', 'POST'])
+def forgot():
+    error = None
+    if request.method == 'POST':
+        username = str(request.form['username'])
+        if username == "":
+            error = "Please enter a username"
+            return render_template("forgot.html", error=error)
+        answer = str(request.form['answer'])
+        if answer == "":
+            error = "Please enter a response"
+            return render_template("forgot.html", error=error)
+        else:
+            username = "'" + str(username) + "'"
+            cur = conn.cursor()
+            query1 = "SELECT email FROM Users WHERE username = %s;" % username
+            cur.execute(query1)
+            correct = cur.fetchall()
+            if len(correct)==0:
+                error = "This username is not in our system"
+                return render_template("forgot.html", error=error)
+            # Note: using email as place holder until secret key attribute is made in Users table
+            if correct[0][0] == answer:
+                cur = conn.cursor()
+                query2 = "SELECT password FROM Users WHERE username = %s;" % username
+                cur.execute(query2)
+                password = cur.fetchall()[0][0]
+                return render_template("forgot.html", correct=password)
+            else:
+                error = "Your response is incorrect"
+                return render_template("forgot.html", error=error)
+
+    return render_template("forgot.html", error=error)
+
+@app.route("/registerationForm", methods = ['GET', 'POST'])
 def registrationForm():
-    return render_template("register.html")
+    error = None
+    if request.method == 'POST':
+        name = str(request.form['name'])
+        if name == "":
+            error = "Please enter a name"
+            return render_template("register.html", error=error)
+        email = str(request.form['email'])
+        if email == "":
+            error = "Please enter an email"
+            return render_template("register.html", error=error)
+        address = str(request.form['address'])
+        if address == "":
+            error = "Please enter an address"
+            return render_template("register.html", error=error)
+        username = str(request.form['username'])
+        if username == "":
+            error = "Please enter a username"
+            return render_template("register.html", error=error)
+        passwrd = str(request.form['password1'])
+        if passwrd == "":
+            error = "Please enter a password"
+            return render_template("register.html", error=error)
+        confirmPass = str(request.form['password2'])
+        if not pass_valid(passwrd, confirmPass):
+            error = 'Passwords do not match, try again.'
+            return render_template("register.html", error=error)
+        secret = str(request.form['name'])
+        if secret == "":
+            error = "Please enter a secret answer"
+            return render_template("register.html", error=error)
+        name = "'" + str(name) + "'"
+        email = "'" + str(email) + "'"
+        username = "'" + str(username) + "'"
+        address = "'" + str(address) + "'"
+        passwrd = "'" + str(passwrd) + "'"
+        cur = conn.cursor()
+        query1 = "SELECT * FROM Users WHERE email = %s;" % email
+        cur.execute(query1)
+        version1 = cur.fetchall()
+        if len(version1) == 1:
+            error = 'Email already use, try Forgot Password.'
+            return render_template("register.html", error=error)
+        cur = conn.cursor()
+        query2 = "SELECT * FROM Users WHERE username = %s;" % username
+        cur.execute(query2)
+        version2 = cur.fetchall()
+        if len(version2) == 1:
+            error = 'Username already in use, try Forgot Password.'
+            return render_template("register.html", error=error)
+        else:
+            cur = conn.cursor()
+            insert = "INSERT INTO Users VALUES(%s, %s, %s, %s, %s, 0, False);" % (username, passwrd, name, email, address)
+            cur.execute(insert)
+            return redirect(url_for('login'))
+    return render_template('register.html', error=error)
 
 
 def parse(data):
