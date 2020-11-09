@@ -39,6 +39,7 @@ def getLoginDetails():
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
+    # Need to adjust how average rating is calculated
     cur = conn.cursor()
     query = "SELECT item_id, name, avg_rate FROM ITEMS ORDER by avg_rate desc LIMIT 3;"
     cur.execute(query)
@@ -55,9 +56,10 @@ def root():
 
 @app.route('/results', methods=['GET', 'POST'])
 def search_results():
+    # Fix for SQL injection attack prevention
     search=request.args['product'].lower()
     cur = conn.cursor()
-    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"
+    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"zzz
     cur.execute(query)
     version = cur.fetchall()
     data=[]
@@ -74,6 +76,8 @@ def search_results():
 
 @app.route("/productDescription", methods=['GET', 'POST'])
 def productDescription():
+    # Make sure this still aligns with updated rating method
+
     placetaker = ''
     item_id = request.args['itemid']
     cur = conn.cursor()
@@ -120,55 +124,78 @@ def productDescription():
     return render_template("productDescription.html", data =data)
 
 @app.route("/add")
-def admin():
+def add():
+    # Probably not necessary
+
     placetaker = ''
     return render_template('add.html', placetaker =placetaker)
 
 @app.route("/addItem", methods=["GET", "POST"])
 def addItem():
+    # Seller adds a new product to sell, this will involve INSERT into the items table,
+    # Check whether the product is already sold
+
     print(msg)
     return redirect(url_for('root'))
 
 @app.route("/remove")
 def remove():
+    # Maybe not necessary
     data = ''
     return render_template('remove.html', data=data)
 
 @app.route("/removeItem")
 def removeItem():
+    # Seller removes item, no longer wants to sell it
+
     print(msg)
     return redirect(url_for('root'))
 
 @app.route("/displayCategory")
 def displayCategory():
+    # View all items in the same category as the current item
+
     placetaker = ''
     return render_template('displayCategory.html', placetaker =placetaker)
 
 @app.route("/account/profile")
 def profileHome():
+    # Depends on buyer or seller user
+    # Show order history or show items for sale
+
     placetaker = ''
     return render_template("profileHome.html", placetaker =placetaker)
 
 @app.route("/account/profile/edit")
 def editProfile():
+    # Probably not
+
     placetaker = ''
     return render_template("editProfile.html", placetaker =placetaker)
 
 @app.route("/account/profile/changePassword", methods=["GET", "POST"])
 def changePassword():
+    # Come back
+
     placetaker = ''
     return render_template("changePassword.html", placetaker =placetaker)
 
 @app.route("/updateProfile", methods=["GET", "POST"])
 def updateProfile():
+    # Come back
+
     return redirect(url_for('editProfile'))
 
 @app.route("/loginForm")
 def loginForm():
+    # Come back
+
     return render_template('login.html', error='')
 
 @app.route("/login", methods = ['POST', 'GET'])
 def login():
+    # Come back
+
     if True:
 
         return redirect(url_for('root'))
@@ -179,28 +206,60 @@ def login():
 
 @app.route("/addToCart")
 def addToCart():
+    # Add item_id to user's cart based on their userID
+    # One user can only have one cart at a time
+
     print('')
     return redirect(url_for('root'))
 
 @app.route("/cart", methods=['GET', 'POST'])
 def cart():
+    # Simply select all the items in a user's cart and display them
+
     placetaker = ''
     return render_template("cart.html", placetaker =placetaker)
 
 @app.route("/removeFromCart")
 def removeFromCart():
+    # REMOVE item_id from user's cart based on their username
+    # How do we get username?
 
     return redirect(url_for('root'))
 
+
+@app.route("/purchase", methods=['GET', 'POST'])
+def purchase():
+    return render_template("reviews.html", error=msg)
+
 @app.route("/logout")
 def logout():
+    # Need to figure this out
 
     return redirect(url_for('root'))
 
 def is_valid(email, password):
+    # Check if email/pass exists
+
     if True:
         return True
     return False
+
+@app.route("/addreview", methods = ['GET', 'POST'])
+def addreview():
+
+
+    return render_template("reviews.html", error=msg)
+
+
+@app.route("/addbalance", methods=['GET', 'POST'])
+def addbalance():
+    return render_template("reviews.html", error=msg)
+
+
+@app.route("/showaverage", methods=['GET', 'POST'])
+def showaverage():
+    return render_template("reviews.html", error=msg)
+
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
