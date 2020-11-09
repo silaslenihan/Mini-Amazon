@@ -58,8 +58,10 @@ def root():
 def search_results():
     # Fix for SQL injection attack prevention
     search=request.args['product'].lower()
+    search="'%"+str(search)+"%'"
     cur = conn.cursor()
-    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE '%" +str(search)+"%' OR LOWER (name) LIKE '%" +str(search)+"%';"zzz
+    #Prevent SQL injection
+    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE %s OR LOWER (name) LIKE %s;" % (search, search)
     cur.execute(query)
     version = cur.fetchall()
     data=[]
