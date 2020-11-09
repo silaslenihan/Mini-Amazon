@@ -1,10 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+<title>Sahara</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/css/style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="../static/javascript/common.js"></script>
 </head>
 <body>
-$END$
+<div class="header">
+  <h1>Sahara</h1>
+  <p>Like Amazon, but without the bugs</p>
+</div>
+<div class="register">
+      <h1>Sign up by email below</h1>
+        <h3>When you click register, you will be redirected to the login page</h3>
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="Name" name="name" value="{{
+          request.form.name }}">
+          <br>
+          <input type="text" placeholder="Email" name="email" value="{{
+          request.form.email }}">
+          <br>
+          <input type="text" placeholder="Address" name="address" value="{{
+          request.form.address }}">
+          <br>
+          <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+          <br>
+         <input type="password" placeholder="Password" name="password1" value="{{
+          request.form.password1 }}">
+          <br>
+          <input type="password" placeholder="Confirm Password" name="password2" value="{{
+          request.form.password2 }}">
+          <br>
+        <input class="btn btn-default" type="submit" value="Register">
+      </form>
+    {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
+    </div>
+<div class="footer">
+  <h3>A CS316 Project</h3>
+</div>
 </body>
 </html>

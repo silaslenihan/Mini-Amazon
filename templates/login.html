@@ -1,10 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+<title>Sahara</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/css/style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="../static/javascript/common.js"></script>
 </head>
 <body>
-$END$
+<div class="header">
+  <h1>Sahara</h1>
+  <p>Like Amazon, but without the bugs</p>
+</div>
+
+<div class="container">
+      <h1>Please login to your account</h1>
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+         <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+    {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
+</div>
+<div class="register">
+      <h1>If you haven't already, register now!</h1>
+      <br>
+      <form action="{{url_for('registrationForm')}}" method="get">
+        <input class="btn btn-default" type="submit" value="Register">
+      </form>
+    </div>
+<div class="footer">
+  <h3>A CS316 Project</h3>
+</div>
 </body>
 </html>
