@@ -1,7 +1,7 @@
 INSERT INTO Category VALUES('Media', 'Television and Movie related media products');
 INSERT INTO Category VALUES('Clothing', 'Clothes products');
 
-INSERT INTO Items VALUES(1, 'Media', 'Friends: Season 1', 4.8, 0, 'Season 1 of popular tv show friends.');
+INSERT INTO Items VALUES(1, 'Media', 'Friends: Season 1', 4.8, 'Season 1 of popular tv show friends.');
 INSERT INTO Items VALUES(2, 'Clothing', 'Banana Republic T-Shirt', 4.1, 0, 'grey tshirt from banana republic.');
 INSERT INTO Items VALUES(3, 'Media', 'Friends: Season 2', 4.5, 0, 'Season 2 of popular tv show friends.');
 INSERT INTO Items VALUES(4, 'Media', 'White Collar: Season 3', 3.9, 0, 'Season 3 of popular tv show white collar.');
@@ -14,7 +14,7 @@ INSERT INTO Items VALUES(10, 'Media', 'Lost: Season 1', 4.4, 0, 'Season 1 of pop
 
 --TO DO: Average rating based on the reviews (not hard coded)? / Same thing for score
 
-INSERT INTO Users VALUES('johndoe','pass1234','John Doe', 'jdoe@gmail.com','1 Main St, Durham, NC', 1000, True);
+INSERT INTO Users VALUES('johndoe','pass1234','John Doe', 'jdoe@gmail.com','1 Main St, Durham, NC', 1000, True, 'abc');
 INSERT INTO Users VALUES('janedoe','pass1234','Jane Doe', 'jadoe1@gmail.com','2 Main St, Durham, NC', 10000, True);
 INSERT INTO Users VALUES('mikey2','pass1234','Michael', 'mike@gmail.com','3 Main St, Durham, NC', 5000, True);
 INSERT INTO Users VALUES('sarah1','pass1234','Sarah', 'sarah@gmail.com','4 Main St, Durham, NC', 2000, True);

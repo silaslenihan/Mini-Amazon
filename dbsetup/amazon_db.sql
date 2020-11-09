@@ -63,6 +63,12 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 PRIMARY KEY(username, item_id));
 
+CREATE VIEW CartSummary AS 
+WITH 
+cart_sum AS (SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username),
+user_list AS (SELECT U.username as username FROM Users U)
+SELECT COALESCE(U.username,C.username) AS username, COALESCE(C.total_price,0) AS total_price, COALESCE(C.total_quantity,0) AS total_quantity FROM user_list U FULL OUTER JOIN cart_sum C ON U.username = C.username;
+
 
 CREATE FUNCTION TF_Modify_buyer_balance_on_order() RETURNS TRIGGER AS $$
 BEGIN
@@ -79,7 +85,17 @@ CREATE TRIGGER TG_Modify_buyer_balance_on_order
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Modify_buyer_balance_on_order();
 
+CREATE FUNCTION TF_Check_balance_enough() RETURNS TRIGGER AS $$
+BEGIN
+	IF NOT EXISTS(SELECT * FROM Users U, CartSummary CS WHERE U.balance > CS.total_price + NEW.quantity*NEW.price_per_item AND U.username = NEW.username AND U.username = CS.username) THEN
+	RAISE EXCEPTION 'The balance of User % is not high enough to afford this item.', NEW.username;
+  	END IF;
+  	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-CREATE VIEW CartSummary AS 
-SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username;
+CREATE TRIGGER TG_Check_balance_enough
+  BEFORE INSERT ON Cart
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_Check_balance_enough();
 
