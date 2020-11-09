@@ -295,8 +295,7 @@ def forgot():
                 query2 = "SELECT password FROM Users WHERE username = %s;" % username
                 cur.execute(query2)
                 password = cur.fetchall()[0][0]
-                error = "Your password is: %s" % password
-                return render_template("forgot.html", error=error)
+                return render_template("forgot.html", correct=password)
             else:
                 error = "Your response is incorrect"
                 return render_template("forgot.html", error=error)
