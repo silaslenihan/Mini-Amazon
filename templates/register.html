@@ -36,6 +36,9 @@
           <input type="password" placeholder="Confirm Password" name="password2" value="{{
           request.form.password2 }}">
           <br>
+          <h4>Security Question: What is the name of your childhood best friend?</h4>
+          <input type="text" placeholder="Answer" name="secret" value="{{
+          request.form.secret }}">
         <input class="btn btn-default" type="submit" value="Register">
       </form>
     {% if error %}

@@ -268,11 +268,40 @@ def showaverage():
     return render_template("reviews.html", error=msg)
 
 
-@app.route("/register", methods = ['GET', 'POST'])
-def register():
-    print("GUY")
-    msg = ''
-    return render_template("login.html", error=msg)
+@app.route("/forgot", methods = ['GET', 'POST'])
+def forgot():
+    error = None
+    if request.method == 'POST':
+        username = str(request.form['username'])
+        if username == "":
+            error = "Please enter a username"
+            return render_template("forgot.html", error=error)
+        answer = str(request.form['answer'])
+        if answer == "":
+            error = "Please enter a response"
+            return render_template("forgot.html", error=error)
+        else:
+            username = "'" + str(username) + "'"
+            cur = conn.cursor()
+            query1 = "SELECT email FROM Users WHERE username = %s;" % username
+            cur.execute(query1)
+            correct = cur.fetchall()
+            if len(correct)==0:
+                error = "This username is not in our system"
+                return render_template("forgot.html", error=error)
+            # Note: using email as place holder until secret key attribute is made in Users table
+            if correct[0][0] == answer:
+                cur = conn.cursor()
+                query2 = "SELECT password FROM Users WHERE username = %s;" % username
+                cur.execute(query2)
+                password = cur.fetchall()[0][0]
+                error = "Your password is: %s" % password
+                return render_template("forgot.html", error=error)
+            else:
+                error = "Your response is incorrect"
+                return render_template("forgot.html", error=error)
+
+    return render_template("forgot.html", error=error)
 
 @app.route("/registerationForm", methods = ['GET', 'POST'])
 def registrationForm():
@@ -301,6 +330,10 @@ def registrationForm():
         confirmPass = str(request.form['password2'])
         if not pass_valid(passwrd, confirmPass):
             error = 'Passwords do not match, try again.'
+            return render_template("register.html", error=error)
+        secret = str(request.form['name'])
+        if secret == "":
+            error = "Please enter a secret answer"
             return render_template("register.html", error=error)
         name = "'" + str(name) + "'"
         email = "'" + str(email) + "'"
