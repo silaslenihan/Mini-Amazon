@@ -5,9 +5,8 @@ CREATE TABLE Users
  email VARCHAR(256) NOT NULL,
  address VARCHAR(256) NOT NULL,
  balance DECIMAL(10,2) NOT NULL,
- isPrime BOOLEAN NOT NULL);
-
---TODO: default balance to 0, make sure email and address are valid formats, make sure passwd fits constraints?
+ isPrime BOOLEAN NOT NULL,
+ secret VARCHAR(256) NOT NULL);
 
 CREATE TABLE Sellers
 (username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
@@ -24,18 +23,15 @@ CREATE TABLE Items
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 name VARCHAR (256) NOT NULL,
 avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
-rec_score DECIMAL(10, 2) NOT NULL CHECK(rec_score >= 0),
 description VARCHAR(256) NOT NULL);
 
---TODO: AVG rating? do we need to specify constraints, or? what is rec score and how do we calc it?
-
---TODO: Add Image? How do we do this in a postgres database? Can descriptions be left out or are they mandatory?
-
 CREATE TABLE Orders
-(order_id INTEGER NOT NULL PRIMARY KEY,
+(buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
+ order_id INTEGER NOT NULL,
  payment_amount DECIMAL(10, 2) NOT NULL,
  date_of_purchase DATE NOT NULL,
- date_of_delivery DATE NOT NULL);
+ date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
+ PRIMARY KEY(buyer_username,order_id));
 
 CREATE TABLE Reviews 
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
@@ -44,14 +40,6 @@ CREATE TABLE Reviews
  content VARCHAR(256) NOT NULL,
  rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
  PRIMARY KEY(username,item_id,date_time));
-
---TODO: make sure DATETIME in right format, is content long enough?
-
-CREATE TABLE OrderHistory
-(seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
- order_id INTEGER NOT NULL REFERENCES Orders(order_id),
- buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
- PRIMARY KEY(seller_username,order_id));
 
 CREATE TABLE OrderItems
 (order_id INTEGER NOT NULL REFERENCES Orders(order_id),
@@ -75,18 +63,6 @@ quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 PRIMARY KEY(username, item_id));
 
---TODO: triggers for when loading db, auto fill who sells what and orders what upon trying to insert orders or reviews and whatnot? Added reviews should modify items avg rating
-
---TODO: RAISE EXCEPTIONS for following issues:
-	-- -prevent selling item or ordering items that have stock below 0
-	-- -make sure everything being purchased can be afforded - use balance to ensure not below 0
-	-- -possible check for similar item in other cats?
-	-- -multiple users with one username acting as seller?
-	-- -seller of item cannot review it
-
 CREATE VIEW CartSummary AS 
 SELECT C.username as username, SUM(C.quantity*C.price_per_item) as total_price, COUNT(C.quantity) as total_quantity FROM Cart C GROUP BY C.username;
-
-
-
 
