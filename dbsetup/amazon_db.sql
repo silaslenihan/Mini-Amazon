@@ -85,6 +85,7 @@ CREATE TRIGGER TG_Modify_buyer_balance_on_order
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Modify_buyer_balance_on_order();
 
+
 CREATE FUNCTION TF_Check_balance_enough() RETURNS TRIGGER AS $$
 BEGIN
 	IF NOT EXISTS(SELECT * FROM Users U, CartSummary CS WHERE U.balance > CS.total_price + NEW.quantity*NEW.price_per_item AND U.username = NEW.username AND U.username = CS.username) THEN
@@ -99,3 +100,23 @@ CREATE TRIGGER TG_Check_balance_enough
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Check_balance_enough();
 
+
+CREATE FUNCTION TF_Modify_stock_item_on_cart_add() RETURNS TRIGGER AS $$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+  	UPDATE SellsItem
+  	SET stock = stock - NEW.quantity
+  	WHERE item_id = NEW.item_id;
+  ELSIF (TG_OP = 'UPDATE') THEN
+  	UPDATE SellsItem
+  	SET stock = stock - (NEW.quantity - OLD.quantity)
+  	WHERE item_id = NEW.item_id;
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_Modify_stock_item_on_cart_add
+  AFTER INSERT OR UPDATE ON Cart
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_Modify_stock_item_on_cart_add();
