@@ -1,5 +1,6 @@
 from flask import *
 import sqlite3, hashlib, os
+from functools import wraps
 from werkzeug.utils import secure_filename
 #from form import ItemSearchForm
 import json
@@ -17,12 +18,14 @@ cur = conn.cursor()
 
 
 app = Flask(__name__)
-app.secret_key = 'random string'
+# Secret key necessary for session login
+app.secret_key = 'sahara'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-
+global usernameID
+global nameID
 
 
 # all of the following method are required to be implemented
@@ -38,7 +41,19 @@ def getLoginDetails():
     conn.close()
     return (loggedIn, firstName, noOfItems)
 
+# Require user to login to access site
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
+
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def root():
     # Need to adjust how average rating is calculated
     cur = conn.cursor()
@@ -52,7 +67,6 @@ def root():
             "item_name": result[1],
             "avg_rate": result[2]
             })
-    print(items)
     return render_template('home.html', items =items)
 
 @app.route('/results', methods=['GET', 'POST'])
@@ -210,8 +224,20 @@ def login():
         if len(version) == 0:
             error = 'Invalid Username / Password'
         else:
+            session['logged_in'] = True
+            flash('You have logged in! Hi '+str(version[0][2])+'!')
+            print(version[0][2])
+            nameID = version[0][2]
+            usernameID = version[0][0]
             return redirect(url_for('root'))
     return render_template('login.html', error=error)
+
+@app.route("/logout")
+@login_required
+def logout():
+    session.pop('logged_in', None)
+    flash('You have logged out!')
+    return redirect(url_for('login'))
 
 @app.route("/addToCart")
 def addToCart():
@@ -239,12 +265,6 @@ def removeFromCart():
 @app.route("/purchase", methods=['GET', 'POST'])
 def purchase():
     return render_template("reviews.html", error=msg)
-
-@app.route("/logout")
-def logout():
-    # Need to figure this out
-
-    return redirect(url_for('root'))
 
 def pass_valid(p1, p2):
     if p1 == p2:

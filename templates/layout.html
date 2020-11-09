@@ -28,10 +28,13 @@
     <a href="#">Purchase History</a>
     <a href="#">Add/Modify Item</a>
     <a href="#">Selling History</a>
-    <a href="#">Logout</a>
+      <a href="#" class="right">View Cart</a>
+    <form action="{{url_for('logout')}}" method="GET" class="logout">
+			<input class="btn btn-default" type="submit" value="Logout">
+		</form>
   </div>
-  </div> 
-  <a href="#" class="right">View Cart</a>
+  </div>
+
   
 </div>
 

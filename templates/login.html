@@ -13,7 +13,10 @@
   <h1>Sahara</h1>
   <p>Like Amazon, but without the bugs</p>
 </div>
-
+<br>
+{% for message in get_flashed_messages() %}
+    {{ message }}
+    {% endfor %}
 <div class="container">
       <h1>Please login to your account</h1>
       <br>
