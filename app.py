@@ -6,6 +6,7 @@ import json
 import os
 import psycopg2
 
+
 conn = psycopg2.connect(
 user="lzjtguuz",
 password="uR_ejvF_D_y0ZmPVoNezR3Md0uzZfrRP",
@@ -194,17 +195,23 @@ def loginForm():
 
     return render_template('login.html', error='')
 
-@app.route("/login", methods = ['POST', 'GET'])
+@app.route("/login", methods = ['GET', 'POST'])
 def login():
-    # Come back
-
-    if True:
-
-        return redirect(url_for('root'))
-    else:
-        error = 'Invalid UserId / Password'
-        return render_template('login.html', error=error)
-
+    error=None
+    if request.method == 'POST':
+        user = str(request.form['username'])
+        passwrd = str(request.form['password'])
+        user = "'"+str(user)+"'"
+        passwrd = "'"+str(passwrd)+"'"
+        cur = conn.cursor()
+        query = "SELECT * FROM Users WHERE username = %s AND password = %s;" % (user, passwrd)
+        cur.execute(query)
+        version = cur.fetchall()
+        if len(version) == 0:
+            error = 'Invalid Username / Password'
+        else:
+            return redirect(url_for('root'))
+    return render_template('login.html', error=error)
 
 @app.route("/addToCart")
 def addToCart():
@@ -239,10 +246,8 @@ def logout():
 
     return redirect(url_for('root'))
 
-def is_valid(email, password):
-    # Check if email/pass exists
-
-    if True:
+def pass_valid(p1, p2):
+    if p1 == p2:
         return True
     return False
 
@@ -265,12 +270,63 @@ def showaverage():
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
+    print("GUY")
     msg = ''
     return render_template("login.html", error=msg)
 
-@app.route("/registerationForm")
+@app.route("/registerationForm", methods = ['GET', 'POST'])
 def registrationForm():
-    return render_template("register.html")
+    error = None
+    if request.method == 'POST':
+        name = str(request.form['name'])
+        if name == "":
+            error = "Please enter a name"
+            return render_template("register.html", error=error)
+        email = str(request.form['email'])
+        if email == "":
+            error = "Please enter an email"
+            return render_template("register.html", error=error)
+        address = str(request.form['address'])
+        if address == "":
+            error = "Please enter an address"
+            return render_template("register.html", error=error)
+        username = str(request.form['username'])
+        if username == "":
+            error = "Please enter a username"
+            return render_template("register.html", error=error)
+        passwrd = str(request.form['password1'])
+        if passwrd == "":
+            error = "Please enter a password"
+            return render_template("register.html", error=error)
+        confirmPass = str(request.form['password2'])
+        if not pass_valid(passwrd, confirmPass):
+            error = 'Passwords do not match, try again.'
+            return render_template("register.html", error=error)
+        name = "'" + str(name) + "'"
+        email = "'" + str(email) + "'"
+        username = "'" + str(username) + "'"
+        address = "'" + str(address) + "'"
+        passwrd = "'" + str(passwrd) + "'"
+        cur = conn.cursor()
+        query1 = "SELECT * FROM Users WHERE email = %s;" % email
+        cur.execute(query1)
+        version1 = cur.fetchall()
+        if len(version1) == 1:
+            error = 'Email already use, try Forgot Password.'
+            return render_template("register.html", error=error)
+        cur = conn.cursor()
+        query2 = "SELECT * FROM Users WHERE username = %s;" % username
+        cur.execute(query2)
+        version2 = cur.fetchall()
+        if len(version2) == 1:
+            error = 'Username already in use, try Forgot Password.'
+            return render_template("register.html", error=error)
+        else:
+            cur = conn.cursor()
+            insert = "INSERT INTO Users VALUES(%s, %s, %s, %s, %s, 0, False);" % (username, passwrd, name, email, address)
+            cur.execute(insert)
+            return redirect(url_for('login'))
+    return render_template('register.html', error=error)
 
 
 def parse(data):
