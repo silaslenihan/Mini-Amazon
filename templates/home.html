@@ -3,9 +3,6 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-            {% for message in get_flashed_messages() %}
-    {{ message }}
-    {% endfor %}
 
 	<div class="search">
 		<form action="{{url_for('search_results')}}" method="GET" class="productSearch">

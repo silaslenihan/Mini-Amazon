@@ -18,25 +18,26 @@
 <div class="navbar">
   <a href="{{url_for('root')}}">Home</a>
   <div class="dropdown">
-  <button class="dropbtn" onclick="openDropdown('userDropdown')">Hi John Doe!
+  <button class="dropbtn" onclick="openDropdown('userDropdown')">Hi {{ session['name'] }}!
     <i class="fa fa-caret-down"></i>
   </button>
   <div class="dropdown-content" id="userDropdown">
-    <p>Current balance: <b>$0.00</b></p> 
+    <p>Current balance: <b>${{ session['balance'] }}</b></p> 
     <a href="#">View Profile</a>
     <a href="#">Add Balance</a>
     <a href="#">Purchase History</a>
     <a href="#">Add/Modify Item</a>
     <a href="#">Selling History</a>
-      <a href="#" class="right">View Cart</a>
-    <form action="{{url_for('logout')}}" method="GET" class="logout">
-			<input class="btn btn-default" type="submit" value="Logout">
-		</form>
+    <a href="{{url_for('logout')}}"> Logout </a>
   </div>
   </div>
+  <a href="#" class="right">View Cart</a>
 
-  
 </div>
+
+{% for message in get_flashed_messages() %}
+    {{ message }}
+    {% endfor %}
 
 {% block content %}
 {% endblock %}

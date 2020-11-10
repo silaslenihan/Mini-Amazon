@@ -30,6 +30,7 @@
   		</div>
 	</div>
 	<h3 class="bodytext">Reviews</h3>
+  <a href="{{url_for('addreview', itemid = data.item_id)}}">Add a Review</a>
 	<table class="results">
 		{% for review in data.reviews_list %}
 		<tr>

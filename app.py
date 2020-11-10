@@ -130,6 +130,7 @@ def productDescription():
         reviews_list.append(review)
 
     data = {
+        "item_id": item_id,
         "item_name": name,
         "description": description,
         "rating": rating,
@@ -225,8 +226,11 @@ def login():
             error = 'Invalid Username / Password'
         else:
             session['logged_in'] = True
+            session['username'] = str(version[0][0])
+            session['name'] = str(version[0][2])
+            session['balance'] = str(version[0][5])
             flash('You have logged in! Hi '+str(version[0][2])+'!')
-            print(version[0][2])
+            print(version[0])
             nameID = version[0][2]
             usernameID = version[0][0]
             return redirect(url_for('root'))
@@ -236,6 +240,9 @@ def login():
 @login_required
 def logout():
     session.pop('logged_in', None)
+    session.pop('username', None)
+    session.pop('name', None)
+    session.pop('balance', None)
     flash('You have logged out!')
     return redirect(url_for('login'))
 
@@ -273,9 +280,18 @@ def pass_valid(p1, p2):
 
 @app.route("/addreview", methods = ['GET', 'POST'])
 def addreview():
-
-
-    return render_template("reviews.html", error=msg)
+    item_id = request.args['itemid']
+    if request.method == 'POST':
+        # TODO: add review to database based on request.form
+        flash("Review submitted successfully")
+        return redirect(url_for('productDescription', itemid=item_id))
+    # TODO: get item name from database
+    item_name = "TEMP ITEM NAME"
+    item = {
+        "itemid": item_id,
+        "itemname": item_name
+    }
+    return render_template("reviews.html", item=item)
 
 
 @app.route("/addbalance", methods=['GET', 'POST'])

@@ -1,0 +1,17 @@
+<html>
+<head></head>
+<body>
+	{% extends 'layout.html' %}
+	{% block content %}
+	<h3 class="bodytext">Adding review for {{ item.itemname }} </h3>
+	<div>
+	<form action="{{url_for('addreview', itemid=item.itemid)}}" method="POST">
+			<label for="numstars"><b>Number of Stars: </b></label>
+			<input type="number" id="numstars" name="numstars" required step=0.1 min=0 max=5>
+			<label for="body"><b>Write your review: </b></label>
+			<textarea id="body" name="body" rows="4" cols="50" maxlength="300"></textarea>
+			<input type="submit">
+		</form>
+	</div>
+	{% endblock %}
+</html>
