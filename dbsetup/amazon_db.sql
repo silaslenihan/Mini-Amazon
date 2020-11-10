@@ -23,6 +23,7 @@ CREATE TABLE Items
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 name VARCHAR (256) NOT NULL,
 avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
+total_ratings INTEGER NOT NULL,
 description VARCHAR(256) NOT NULL);
 
 CREATE TABLE Orders
@@ -85,13 +86,27 @@ CREATE TRIGGER TG_Modify_buyer_balance_on_order
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Modify_buyer_balance_on_order();
 
+CREATE FUNCTION TF_Check_balance_enough_on_order() RETURNS TRIGGER AS $$
+BEGIN
+  IF NOT EXISTS(SELECT * FROM Users U WHERE U.balance >= NEW.payment_amount AND U.username = NEW.buyer_username) THEN
+    RAISE EXCEPTION 'The balance of User % is not high enough to afford placing this order.', NEW.buyer_username;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_Check_balance_enough_on_order
+  BEFORE INSERT ON Orders
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_Check_balance_enough_on_order();
+
 
 CREATE FUNCTION TF_Check_balance_enough() RETURNS TRIGGER AS $$
 BEGIN
-	IF NOT EXISTS(SELECT * FROM Users U, CartSummary CS WHERE U.balance > CS.total_price + NEW.quantity*NEW.price_per_item AND U.username = NEW.username AND U.username = CS.username) THEN
-	RAISE EXCEPTION 'The balance of User % is not high enough to afford this item.', NEW.username;
-  	END IF;
-  	RETURN NEW;
+	IF NOT EXISTS(SELECT * FROM Users U, CartSummary CS WHERE U.balance >= CS.total_price + NEW.quantity*NEW.price_per_item AND U.username = NEW.username AND U.username = CS.username) THEN
+	  RAISE EXCEPTION 'The balance of User % is not high enough to afford this item.', NEW.username;
+  END IF;
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -122,13 +137,11 @@ CREATE TRIGGER TG_Modify_stock_item_on_cart_add
   EXECUTE PROCEDURE TF_Modify_stock_item_on_cart_add();
 
 
-  CREATE FUNCTION TF_PasswordLength() RETURNS TRIGGER AS $$
+CREATE FUNCTION TF_PasswordLength() RETURNS TRIGGER AS $$
 BEGIN
-  -- YOUR IMPLEMENTATION GOES HERE
-IF (LEN(New.password) < 8)
-THEN
-RAISE EXCEPTION 'password must be at least 8 characters long';
-END IF;
+  IF (char_length(NEW.password) < 8) THEN
+    RAISE EXCEPTION 'password must be at least 8 characters long';
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -139,29 +152,22 @@ CREATE TRIGGER TG_PasswordLength
   EXECUTE PROCEDURE TF_PasswordLength();
 
 
-
 CREATE FUNCTION TF_UpdateAverageRtg() RETURNS TRIGGER AS $$
 BEGIN
-  -- YOUR IMPLEMENTATION GOES HERE
-UPDATE Items
-
-WITH NumReviews AS 
-(COUNT()
-FROM Reviews r
-WHERE r.item_id = NEW.item_id)
-
-WITH AvgRating AS 
-(SELECT avg_rate
-FROM Items t
-WHERE t.item_id = NEW.item_id)
-
-WITH TotalRating AS
-(NumReviews * AvgRating)
-
-SET avg_rate = (TotalRating + NEW.rating) / (NumReviews + 1)
-WHERE item_id = NEW.item_id
-
-  RETURN NEW;
+  IF EXISTS (SELECT * FROM Items WHERE item_id = NEW.item_id AND total_ratings = 0) THEN
+    UPDATE Items
+    SET 
+      avg_rate = NEW.rating,
+      total_ratings = 1
+    WHERE item_id = NEW.item_id;
+  ELSE
+    UPDATE Items
+    SET 
+      avg_rate = (total_ratings * avg_rate + NEW.rating)/(total_ratings + 1),
+      total_ratings = total_ratings + 1
+    WHERE item_id = NEW.item_id;
+  END IF;
+  RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -173,17 +179,49 @@ CREATE TRIGGER TG_UpdateAverageRtg
 
 CREATE FUNCTION TF_SellerNoReview() RETURNS TRIGGER AS $$
 BEGIN
-  -- YOUR IMPLEMENTATION GOES HERE
-IF (New.username, New.item_id IN (SELECT s.seller_username, s.item_id,FROM SellsItem S) 
-THEN
-RAISE EXCEPTION 'user % already selling %', s.seller_username, s.item_id;
-END IF;
+  IF EXISTS (SELECT * FROM SellsItem S WHERE S.item_id = NEW.item_id AND S.seller_username = NEW.username) THEN
+    RAISE EXCEPTION 'user % cannot review an item they are selling.', NEW.username;
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER TG_SellerNoReview
-  BEFORE INSERT ON Review
+  BEFORE INSERT ON Reviews
   FOR EACH ROW
   EXECUTE PROCEDURE TF_SellerNoReview();
 
+CREATE FUNCTION TF_ReviewNotSeller() RETURNS TRIGGER AS $$
+BEGIN
+  IF EXISTS (SELECT * FROM Reviews R WHERE R.item_id = NEW.item_id AND R.username = NEW.seller_username) THEN
+    RAISE EXCEPTION 'user % cannot sell an item they are reviewing.', NEW.seller_username;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_ReviewNotSeller
+  BEFORE INSERT ON SellsItem
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_ReviewNotSeller();
+
+
+CREATE FUNCTION TF_Check_stock_item_on_cart_add() RETURNS TRIGGER AS $$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity > S.stock AND NEW.item_id = S.item_id) THEN
+      RAISE EXCEPTION 'there is not enough remaining stock of item % to purchase % of that item', NEW.item_id, NEW.quantity;
+    END IF;
+  ELSIF (TG_OP = 'UPDATE') THEN
+    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity - OLD.quantity > S.stock AND NEW.item_id = S.item_id) THEN
+      RAISE EXCEPTION 'there is not enough remaining stock of item % to purchase % of that item', NEW.item_id, NEW.quantity;
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_Check_stock_item_on_cart_add
+  BEFORE INSERT OR UPDATE ON Cart
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_Check_stock_item_on_cart_add();
