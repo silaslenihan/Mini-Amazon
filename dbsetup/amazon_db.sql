@@ -120,3 +120,70 @@ CREATE TRIGGER TG_Modify_stock_item_on_cart_add
   AFTER INSERT OR UPDATE ON Cart
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Modify_stock_item_on_cart_add();
+
+
+  CREATE FUNCTION TF_PasswordLength() RETURNS TRIGGER AS $$
+BEGIN
+  -- YOUR IMPLEMENTATION GOES HERE
+IF (LEN(New.password) < 8)
+THEN
+RAISE EXCEPTION 'password must be at least 8 characters long';
+END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_PasswordLength
+  BEFORE INSERT OR UPDATE ON Users
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_PasswordLength();
+
+
+
+CREATE FUNCTION TF_UpdateAverageRtg() RETURNS TRIGGER AS $$
+BEGIN
+  -- YOUR IMPLEMENTATION GOES HERE
+UPDATE Items
+
+WITH NumReviews AS 
+(COUNT()
+FROM Reviews r
+WHERE r.item_id = NEW.item_id)
+
+WITH AvgRating AS 
+(SELECT avg_rate
+FROM Items t
+WHERE t.item_id = NEW.item_id)
+
+WITH TotalRating AS
+(NumReviews * AvgRating)
+
+SET avg_rate = (TotalRating + NEW.rating) / (NumReviews + 1)
+WHERE item_id = NEW.item_id
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_UpdateAverageRtg
+  AFTER INSERT ON Reviews
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_UpdateAverageRtg();
+
+
+CREATE FUNCTION TF_SellerNoReview() RETURNS TRIGGER AS $$
+BEGIN
+  -- YOUR IMPLEMENTATION GOES HERE
+IF (New.username, New.item_id IN (SELECT s.seller_username, s.item_id,FROM SellsItem S) 
+THEN
+RAISE EXCEPTION 'user % already selling %', s.seller_username, s.item_id;
+END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_SellerNoReview
+  BEFORE INSERT ON Review
+  FOR EACH ROW
+  EXECUTE PROCEDURE TF_SellerNoReview();
+
