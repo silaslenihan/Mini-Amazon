@@ -1,0 +1,33 @@
+<html>
+<head></head>
+<body>
+
+	{% extends 'layout.html' %}
+	{% block content %}
+	<h3>Your Cart</h3>
+	<h4>Total Cost: $40.00 </h4>
+	<form action="{{url_for('cart')}}" method="POST">
+		<input type="submit" value="Checkout">
+	</form>
+	<div>
+		<table class="results">
+			<tr>
+				<th>Item Image</th>
+				<th>Item Name</th>
+				<th>Seller</th>
+				<th>Per-Unit Price</th>
+				<th>Count</th>
+			</tr>
+			<tr>
+				<td><img src="../static/images/default-img.gif" alt="Default product image" style="max-width: 300;max-height: 300"></td>
+				<td><p><a href="{{url_for('productDescription', itemid=3)}}">Item XXX</a></p></td>
+				<td><p>johndoe</p></td>
+				<td><p>$10.00</p></td>
+				<td><p>3</p></td>
+				<td><p><a href="{{url_for('removeFromCart')}}">Remove this item</a></p></td>
+			</tr>
+		</table>
+	</div>
+	{% endblock %}
+
+</html>

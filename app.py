@@ -296,7 +296,7 @@ def addreview():
 
 @app.route("/addbalance", methods=['GET', 'POST'])
 def addbalance():
-    return render_template("reviews.html", error=msg)
+    return render_template("addBalance.html")
 
 
 @app.route("/showaverage", methods=['GET', 'POST'])

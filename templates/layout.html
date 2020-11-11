@@ -23,15 +23,15 @@
   </button>
   <div class="dropdown-content" id="userDropdown">
     <p>Current balance: <b>${{ session['balance'] }}</b></p> 
-    <a href="#">View Profile</a>
-    <a href="#">Add Balance</a>
+    <a href="{{ url_for('profileHome', username = session['username']) }}"> View Profile</a>
+    <a href="{{url_for('addbalance')}}">Add Balance</a>
     <a href="#">Purchase History</a>
     <a href="#">Add/Modify Item</a>
     <a href="#">Selling History</a>
     <a href="{{url_for('logout')}}"> Logout </a>
   </div>
   </div>
-  <a href="#" class="right">View Cart</a>
+  <a href="{{url_for('cart')}}" class="right">View Cart</a>
 
 </div>
 

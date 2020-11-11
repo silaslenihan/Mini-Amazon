@@ -1,0 +1,17 @@
+<html>
+<head></head>
+<body>
+
+	{% extends 'layout.html' %}
+	{% block content %}
+	<div style="text-align: center">
+		<h3> Your current balance: ${{ session['balance']}} </h3>
+		<form action="{{url_for('addbalance')}}" method="POST">
+			<label for="amount"><b>Amount to Add: </b></label>
+			<input type="number" id="amount" name="amount" required step=0.01 min=0>
+			<input type="submit">
+		</form>
+	</div>
+	{% endblock %}
+
+</html>
