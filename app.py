@@ -234,8 +234,8 @@ def login():
             isSeller = "SELECT * FROM Sellers WHERE username = %s;" % user
             cur = conn.cursor()
             cur.execute(isSeller)
-            version = cur.fetchall()
-            if len(version)==0:
+            version2 = cur.fetchall()
+            if len(version2)==0:
                 session['seller']=False
             else:
                 session['seller']=True
@@ -272,7 +272,7 @@ def cart():
     username = "'" + str(session['username']) + "'"
     cur = conn.cursor()
     getItems = "WITH user_items AS (SELECT C.item_id, C.quantity," \
-               "C.price_per_item FROM Cart C WHERE username = %s)," \
+               "C.price_per_item, C.seller_username FROM Cart C WHERE username = %s)," \
                "user_items_with_info AS (SELECT UI.item_id, UI.quantity," \
                "UI.price_per_item, I.name, I.cat_name, I.avg_rate," \
                "I.description FROM user_items UI, Items I WHERE " \
