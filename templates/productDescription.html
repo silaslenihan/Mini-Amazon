@@ -19,11 +19,15 @@
   					<th>Add to Cart</th>
 				</tr>
   				{% for seller in data.sellers_list %}
+          <form action="{{url_for('addItem')}}" id={{seller.username}} method="POST">
+            <input type="hidden" id="seller" name="seller" value={{seller.username}}>
+            <input type="hidden" id="price" name="price" value={{seller.price}}>
+          </form>
   				<tr>
-  					<td>{{seller}}</td>
-  					<td><i>TODO</i></td>
-  					<td><i>TODO</i></td>
-  					<td><i>TODO</i></td>
+  					<td>{{seller.username}}</td>
+  					<td>{{seller.price}}</td>
+  					<td><input type="number" required form={{seller.username}} id="quantity" name="quantity" min="1" max={{seller.stock}}></td>
+  					<td><input type="submit" form={{seller.username}} value="Add to Cart"></td>
   				</tr>
   				{% endfor %}
   			</table>

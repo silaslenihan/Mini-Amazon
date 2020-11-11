@@ -6,10 +6,12 @@
 	{% block content %}
 	<div style="text-align: center">
 		<h3> Your Account Information: </h3>
-		<h5> Name: John Doe </h5>
-		<h5> Email: email@email </h5>
-		<h5> Username: johndoe </h5>
-		<h5> Are you a seller? Yes</h5>
+		<h5> Name: {{ session['name'] }} </h5>
+		<h5> Email: {{ session['email'] }} </h5>
+		<h5> Username: {{ session['username'] }} </h5>
+		<h5> Are you a seller? {% if session['seller'] %} Yes {% endif %}
+			{% if not session['seller'] %} No {% endif %}
+		</h5>
 		<h5><a href="{{url_for('cart')}}">Your Cart</a></h5>
 		<h5><a href="">Your Purchase History</a></h5>
 		<h5><a href="">Your Selling History</a></h5>
