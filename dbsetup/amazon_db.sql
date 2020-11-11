@@ -32,7 +32,8 @@ CREATE TABLE Orders
  payment_amount DECIMAL(10, 2) NOT NULL,
  date_of_purchase DATE NOT NULL,
  date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
- PRIMARY KEY(buyer_username,order_id));
+ PRIMARY KEY(buyer_username,order_id),
+ UNIQUE(order_id));
 
 CREATE TABLE Reviews 
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
