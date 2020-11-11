@@ -86,6 +86,7 @@ def root():
     return render_template('home.html', items =items)
 
 @app.route('/results', methods=['GET', 'POST'])
+@login_required
 def search_results():
     # Fix for SQL injection attack prevention
     search=request.args['product'].lower()
@@ -107,6 +108,7 @@ def search_results():
 
 
 @app.route("/productDescription", methods=['GET', 'POST'])
+@login_required
 def productDescription():
     # Make sure this still aligns with updated rating method
 
@@ -157,6 +159,7 @@ def productDescription():
     return render_template("productDescription.html", data =data)
 
 @app.route("/add")
+@login_required
 def add():
     # Probably not necessary
 
@@ -164,6 +167,7 @@ def add():
     return render_template('add.html', placetaker =placetaker)
 
 @app.route("/addItem", methods=["GET", "POST"])
+@login_required
 def addItem():
     # Seller adds a new product to sell, this will involve INSERT into the items table,
     # Check whether the product is already sold
@@ -172,46 +176,28 @@ def addItem():
     return redirect(url_for('root'))
 
 @app.route("/remove")
+@login_required
 def remove():
     # Maybe not necessary
     data = ''
     return render_template('remove.html', data=data)
 
 @app.route("/removeItem")
+@login_required
 def removeItem():
     # Seller removes item, no longer wants to sell it
 
     print(msg)
     return redirect(url_for('root'))
 
-@app.route("/displayCategory")
-def displayCategory():
-    # View all items in the same category as the current item
-
-    placetaker = ''
-    return render_template('displayCategory.html', placetaker =placetaker)
-
-@app.route("/account/profile")
-def profileHome():
-    # Depends on buyer or seller user
-    # Show order history or show items for sale
-
-    placetaker = ''
-    return render_template("profileHome.html", placetaker =placetaker)
-
-@app.route("/account/profile/edit")
-def editProfile():
-    # Probably not
-
-    placetaker = ''
-    return render_template("editProfile.html", placetaker =placetaker)
-
 @app.route("/updateProfile", methods=["GET", "POST"])
+@login_required
 def updateProfile():
     # Come back
     return redirect(url_for('editProfile'))
 
 @app.route("/login", methods = ['GET', 'POST'])
+@login_required
 def login():
     error=None
     if request.method == 'POST':
@@ -259,6 +245,7 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route("/addToCart")
+@login_required
 def addToCart():
     # Add item_id to user's cart based on their userID
     # One user can only have one cart at a time
@@ -267,13 +254,14 @@ def addToCart():
     return redirect(url_for('root'))
 
 @app.route("/cart", methods=['GET', 'POST'])
+@login_required
 def cart():
     # Simply select all the items in a user's cart and display them
     username = "'" + str(session['username']) + "'"
     cur = conn.cursor()
     getItems = "WITH user_items AS (SELECT C.item_id, C.quantity," \
                "C.price_per_item, C.seller_username FROM Cart C WHERE username = %s)," \
-               "user_items_with_info AS (SELECT UI.item_id, UI.quantity," \
+               "user_items_with_info AS (SELECT UI.item_id, UI.seller_username, UI.quantity," \
                "UI.price_per_item, I.name, I.cat_name, I.avg_rate," \
                "I.description FROM user_items UI, Items I WHERE " \
                "UI.item_id = I.item_id) SELECT * FROM user_items_with_info;" % username
@@ -283,17 +271,20 @@ def cart():
     for row in cartItems:
         data_row = {}
         data_row['item_id'] = row[0]
-        data_row['quantity'] = row[1]
-        data_row['price_per_item'] = row[2]
-        data_row['name'] = row[3]
-        data_row['cat_name'] = row[4]
-        data_row['avg_rate'] = row[5]
-        data_row['description'] = row[6]
+        data_row['seller_username'] = row[1]
+        data_row['quantity'] = row[2]
+        data_row['price_per_item'] = row[3]
+        data_row['name'] = row[4]
+        data_row['cat_name'] = row[5]
+        data_row['avg_rate'] = row[6]
+        data_row['description'] = row[7]
         items.append(data_row)
     return render_template('cart.html', items=items)
 
 @app.route("/removeFromCart")
+@login_required
 def removeFromCart():
+
     # REMOVE item_id from user's cart based on their username
     # How do we get username?
 
@@ -301,6 +292,7 @@ def removeFromCart():
 
 
 @app.route("/purchase", methods=['GET', 'POST'])
+@login_required
 def purchase():
     return render_template("reviews.html", error=msg)
 
@@ -310,6 +302,7 @@ def pass_valid(p1, p2):
     return False
 
 @app.route("/addreview", methods = ['GET', 'POST'])
+@login_required
 def addreview():
     item_id = request.args['itemid']
     if request.method == 'POST':
@@ -326,6 +319,7 @@ def addreview():
 
 
 @app.route("/addbalance", methods=['GET', 'POST'])
+@login_required
 def addbalance():
     error = None
     if request.method == 'POST':
@@ -347,6 +341,7 @@ def addbalance():
 
 
 @app.route("/showaverage", methods=['GET', 'POST'])
+@login_required
 def showaverage():
     return render_template("reviews.html", error=msg)
 
