@@ -9,9 +9,9 @@ import psycopg2
 
 
 conn = psycopg2.connect(
-user="lzjtguuz",
-password="uR_ejvF_D_y0ZmPVoNezR3Md0uzZfrRP",
-host="salt.db.elephantsql.com",
+user="mreqkpip",
+password="mWq-ES4xXvbtfXflk3xftLFQwqTCqFII",
+host="lallah.db.elephantsql.com",
 port="5432"
 )
 cur = conn.cursor()
