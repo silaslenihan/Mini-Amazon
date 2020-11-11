@@ -103,7 +103,6 @@ def search_results():
         data_row['category'] = row[1]
         data_row['rating'] = row[3]
         data.append(data_row)
-    print(data)
     return render_template('result.html', item = data)
 
 
@@ -260,9 +259,28 @@ def addToCart():
 @app.route("/cart", methods=['GET', 'POST'])
 def cart():
     # Simply select all the items in a user's cart and display them
-
-    placetaker = ''
-    return render_template("cart.html", placetaker =placetaker)
+    username = "'" + str(session['username']) + "'"
+    cur = conn.cursor()
+    getItems = "WITH user_items AS (SELECT C.item_id, C.quantity," \
+               "C.price_per_item FROM Cart C WHERE username = %s)," \
+               "user_items_with_info AS (SELECT UI.item_id, UI.quantity," \
+               "UI.price_per_item, I.name, I.cat_name, I.avg_rate," \
+               "I.description FROM user_items UI, Items I WHERE " \
+               "UI.item_id = I.item_id) SELECT * FROM user_items_with_info;" % username
+    cur.execute(getItems)
+    cartItems = cur.fetchall()
+    items = []
+    for row in cartItems:
+        data_row = {}
+        data_row['item_id'] = row[0]
+        data_row['quantity'] = row[1]
+        data_row['price_per_item'] = row[2]
+        data_row['name'] = row[3]
+        data_row['cat_name'] = row[4]
+        data_row['avg_rate'] = row[5]
+        data_row['description'] = row[6]
+        items.append(data_row)
+    return render_template('cart.html', items=items)
 
 @app.route("/removeFromCart")
 def removeFromCart():
