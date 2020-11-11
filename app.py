@@ -34,6 +34,21 @@ global nameID
 
 # my implementation is based on sqlite3, you are free to change it to sqlAlchemy
 
+
+
+# Require user to login to access site
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
+
+@app.route('/profileHome')
+@login_required
 def getUserDetails():
     username = session['username']
     name = session['name']
@@ -56,17 +71,6 @@ def getUserDetails():
         "seller": seller
     })
     return render_template('profileHome.html', info=info)
-
-# Require user to login to access site
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required

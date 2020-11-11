@@ -23,7 +23,7 @@
   </button>
   <div class="dropdown-content" id="userDropdown">
     <p>Current balance: <b>${{ session['balance'] }}</b></p> 
-    <a href="{{ url_for('profileHome', username = session['username']) }}"> View Profile</a>
+    <a href="{{ url_for('getUserDetails') }}"> View Profile</a>
     <a href="{{url_for('addbalance')}}">Add Balance</a>
     <a href="#">Purchase History</a>
     <a href="#">Add/Modify Item</a>
