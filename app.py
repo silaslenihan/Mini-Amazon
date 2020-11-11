@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 import json
 import os
 import psycopg2
+from datetime import date
+
 
 
 conn = psycopg2.connect(
@@ -115,12 +117,12 @@ def search_results():
 @login_required
 def productDescription():
     # Make sure this still aligns with updated rating method
-
     placetaker = ''
-    item_id = request.args['itemid']
+    item_id = int(request.args['itemid'])
+    print(item_id)
     cur = conn.cursor()
     # get matching item from db
-    query1 = f"SELECT * FROM Items WHERE item_id = {item_id}"
+    query1 = "SELECT * FROM Items WHERE item_id = %d;" % int(item_id)
     cur.execute(query1)
     results1 = cur.fetchall()[0]
     # get parameters we need for product page
@@ -304,16 +306,31 @@ def pass_valid(p1, p2):
         return True
     return False
 
+import datetime
 @app.route("/addreview", methods = ['GET', 'POST'])
 @login_required
 def addreview():
     item_id = request.args['itemid']
     if request.method == 'POST':
-        # TODO: add review to database based on request.form
-        flash("Review submitted successfully")
+        username= session['username']
+        username = "'" +str(username)+"'"
+        day=str(date.today())
+        day = "'"+str(day)+"'"
+        content = str(request.form['body'])
+        content = "'"+str(content)+"'"
+        stars= float(request.form['numstars'])
+        addRev = "INSERT INTO Reviews VALUES (%s, %d, %s, %s, %d);" % (username, int(item_id), day, content, stars)
+        cur=conn.cursor()
+        try:
+            cur.execute(addRev)
+            flash("Review submitted successfully")
+        except:
+            flash("Cannot review an item you are selling!")
         return redirect(url_for('productDescription', itemid=item_id))
-    # TODO: get item name from database
-    item_name = "TEMP ITEM NAME"
+    getName = "SELECT name FROM Items WHERE item_id = %d;" % int(item_id)
+    cur = conn.cursor()
+    cur.execute(getName)
+    item_name = cur.fetchall()[0][0]
     item = {
         "itemid": item_id,
         "itemname": item_name
