@@ -9,8 +9,8 @@ import psycopg2
 
 
 conn = psycopg2.connect(
-user="mreqkpip",
-password="mWq-ES4xXvbtfXflk3xftLFQwqTCqFII",
+user="rwrcuqxo",
+password="fjAbl6HJjop7bDM9L3zfMZ9c_yT9wdM8",
 host="lallah.db.elephantsql.com",
 port="5432"
 )
