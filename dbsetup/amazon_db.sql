@@ -62,6 +62,7 @@ CREATE TABLE Cart
 username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
+seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(seller_username),
 PRIMARY KEY(username, item_id));
 
 CREATE VIEW CartSummary AS 
