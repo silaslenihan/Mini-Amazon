@@ -12,13 +12,6 @@ INSERT INTO Items VALUES(8, 'Clothing', 'Nike Running Shoes', 4.3, 1, 'white and
 INSERT INTO Items VALUES(9, 'Clothing', 'Nike Ankle Socks', 4.0, 1, 'Soft, white ankle length socks.');
 INSERT INTO Items VALUES(10, 'Media', 'Lost: Season 1', 4.4, 1, 'Season 1 of popular tv show lost.');
 
---TO DO: Average rating based on the reviews (not hard coded)? / Same thing for score
-
-INSERT INTO Cart VALUES(2, 'johndoe', 5, 17.50);
-INSERT INTO Cart VALUES(1, 'johndoe', 3, 19.99);
-INSERT INTO Cart VALUES(3, 'johndoe', 1, 19.99);
-INSERT INTO Cart VALUES(4, 'johndoe', 2, 17.50);
-INSERT INTO Cart VALUES(5, 'johndoe', 4, 19.99);
 
 INSERT INTO Users VALUES('johndoe','pass1234','John Doe', 'jdoe@gmail.com','1 Main St, Durham, NC', 1000, True, 'abc');
 INSERT INTO Users VALUES('janedoe','pass1234','Jane Doe', 'jadoe1@gmail.com','2 Main St, Durham, NC', 10000, True, 'def');
@@ -79,3 +72,10 @@ INSERT INTO SellsItem VALUES('janedoe', 7, 'Clothing', 19.99, 10);
 INSERT INTO SellsItem VALUES('janedoe', 8, 'Clothing', 13.29, 10);
 INSERT INTO SellsItem VALUES('janedoe', 9, 'Clothing', 17.99, 10);
 INSERT INTO SellsItem VALUES('janedoe', 10, 'Media', 88.99, 10);
+
+
+INSERT INTO Cart VALUES(2, 'johndoe', 5, 17.50);
+INSERT INTO Cart VALUES(1, 'johndoe', 3, 19.99);
+INSERT INTO Cart VALUES(3, 'johndoe', 1, 19.99);
+INSERT INTO Cart VALUES(4, 'johndoe', 2, 17.50);
+INSERT INTO Cart VALUES(5, 'johndoe', 4, 19.99);
