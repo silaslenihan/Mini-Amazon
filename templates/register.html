@@ -44,6 +44,16 @@
     {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
+    <h3>Would you like to register as a seller?</h3>
+    <form action="/action_page.php", method="post">
+      <label for="cars">Select an option</label>
+      <select name="seller" id="seller">
+        <option value="No">No</option>
+          <option value="Yes">Yes</option>
+      </select>
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
     </div>
 <div class="footer">
   <h3>A CS316 Project</h3>

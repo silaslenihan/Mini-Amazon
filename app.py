@@ -319,13 +319,12 @@ def forgot():
         else:
             username = "'" + str(username) + "'"
             cur = conn.cursor()
-            query1 = "SELECT email FROM Users WHERE username = %s;" % username
+            query1 = "SELECT secret FROM Users WHERE username = %s;" % username
             cur.execute(query1)
             correct = cur.fetchall()
             if len(correct)==0:
                 error = "This username is not in our system"
                 return render_template("forgot.html", error=error)
-            # Note: using email as place holder until secret key attribute is made in Users table
             if correct[0][0] == answer:
                 cur = conn.cursor()
                 query2 = "SELECT password FROM Users WHERE username = %s;" % username
@@ -375,6 +374,7 @@ def registrationForm():
         username = "'" + str(username) + "'"
         address = "'" + str(address) + "'"
         passwrd = "'" + str(passwrd) + "'"
+        secret = "'" + str(secret) + "'"
         cur = conn.cursor()
         query1 = "SELECT * FROM Users WHERE email = %s;" % email
         cur.execute(query1)
@@ -391,7 +391,7 @@ def registrationForm():
             return render_template("register.html", error=error)
         else:
             cur = conn.cursor()
-            insert = "INSERT INTO Users VALUES(%s, %s, %s, %s, %s, 0, False);" % (username, passwrd, name, email, address)
+            insert = "INSERT INTO Users VALUES(%s, %s, %s, %s, %s, 0, False, %s);" % (username, passwrd, name, email, address, secret)
             cur.execute(insert)
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
