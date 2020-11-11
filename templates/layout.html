@@ -26,8 +26,10 @@
     <a href="{{ url_for('getUserDetails') }}"> View Profile</a>
     <a href="{{url_for('addbalance')}}">Add Balance</a>
     <a href="#">Purchase History</a>
-    <a href="#">Add/Modify Item</a>
-    <a href="#">Selling History</a>
+    {% if session['seller'] %}
+      <a href="#">Add/Modify Item</a>
+      <a href="#">Selling History</a>
+    {% endif %}
     <a href="{{url_for('logout')}}"> Logout </a>
   </div>
   </div>

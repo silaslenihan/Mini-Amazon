@@ -134,7 +134,11 @@ def productDescription():
     # get list of sellers who sell that item
     seller_list = []
     for result in results2:
-        seller_list.append(result[0])
+        seller = {}
+        seller['username'] = result[0]
+        seller['price'] = result[3]
+        seller['stock'] = result[4]
+        seller_list.append(seller)
     # get matching reviews from db
     query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id}"
     cur.execute(query3)
@@ -176,7 +180,6 @@ def addItem():
     # Seller adds a new product to sell, this will involve INSERT into the items table,
     # Check whether the product is already sold
 
-    print(msg)
     return redirect(url_for('root'))
 
 @app.route("/remove")
