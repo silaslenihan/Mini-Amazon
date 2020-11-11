@@ -34,12 +34,28 @@ global nameID
 
 # my implementation is based on sqlite3, you are free to change it to sqlAlchemy
 
-def getLoginDetails():
-    with sqlite3.connect('database.db') as conn:
-        pass
-        #
-    conn.close()
-    return (loggedIn, firstName, noOfItems)
+def getUserDetails():
+    username = session['username']
+    name = session['name']
+    email = session['email']
+    usernameQuery = "'"+str(username)+"'"
+    cur = conn.cursor()
+    checkSeller = "SELECT * FROM Sellers WHERE username = %s" % (usernameQuery)
+    cur.execute(checkSeller)
+    version = cur.fetchall()
+    seller=""
+    if len(version)==0:
+        seller="No"
+    else:
+        seller="Yes"
+    info = []
+    info.append({
+        "name": name,
+        "email": email,
+        "username": username,
+        "seller": seller
+    })
+    return render_template('profileHome.html', info=info)
 
 # Require user to login to access site
 def login_required(f):
@@ -191,24 +207,10 @@ def editProfile():
     placetaker = ''
     return render_template("editProfile.html", placetaker =placetaker)
 
-@app.route("/account/profile/changePassword", methods=["GET", "POST"])
-def changePassword():
-    # Come back
-
-    placetaker = ''
-    return render_template("changePassword.html", placetaker =placetaker)
-
 @app.route("/updateProfile", methods=["GET", "POST"])
 def updateProfile():
     # Come back
-
     return redirect(url_for('editProfile'))
-
-@app.route("/loginForm")
-def loginForm():
-    # Come back
-
-    return render_template('login.html', error='')
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
@@ -227,6 +229,7 @@ def login():
         else:
             session['logged_in'] = True
             session['username'] = str(version[0][0])
+            session['email'] = str(version[0][3])
             session['name'] = str(version[0][2])
             session['balance'] = str(version[0][5])
             flash('You have logged in! Hi '+str(version[0][2])+'!')
