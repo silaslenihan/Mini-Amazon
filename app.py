@@ -197,7 +197,6 @@ def updateProfile():
     return redirect(url_for('editProfile'))
 
 @app.route("/login", methods = ['GET', 'POST'])
-@login_required
 def login():
     error=None
     if request.method == 'POST':
