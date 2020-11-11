@@ -231,6 +231,14 @@ def login():
             session['email'] = str(version[0][3])
             session['name'] = str(version[0][2])
             session['balance'] = str(version[0][5])
+            isSeller = "SELECT * FROM Sellers WHERE username = %s;" % user
+            cur = conn.cursor()
+            cur.execute(isSeller)
+            version = cur.fetchall()
+            if len(version)==0:
+                session['seller']=False
+            else:
+                session['seller']=True
             flash('You have logged in! Hi '+str(version[0][2])+'!')
             print(version[0])
             nameID = version[0][2]
@@ -245,6 +253,8 @@ def logout():
     session.pop('username', None)
     session.pop('name', None)
     session.pop('balance', None)
+    session.pop('email', None)
+    session.pop('seller', None)
     flash('You have logged out!')
     return redirect(url_for('login'))
 
