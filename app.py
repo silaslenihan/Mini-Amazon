@@ -296,7 +296,23 @@ def addreview():
 
 @app.route("/addbalance", methods=['GET', 'POST'])
 def addbalance():
-    return render_template("addBalance.html")
+    error = None
+    if request.method == 'POST':
+        try:
+            amount = float(request.form['amount'])
+        except:
+            error = "Please enter a numerical value"
+            return render_template("addBalance.html", error=error)
+        username=session['username']
+        balance=float(session['balance'])
+        balance+=amount
+        username = "'" + str(username) + "'"
+        cur = conn.cursor()
+        update = "UPDATE Users SET balance = %d WHERE username = %s;" % (balance, username)
+        cur.execute(update)
+        session['balance']=str(balance)
+        return render_template("addBalance.html", error=error)
+    return render_template("addBalance.html", error=error)
 
 
 @app.route("/showaverage", methods=['GET', 'POST'])
@@ -358,8 +374,8 @@ def registrationForm():
             error = "Please enter a username"
             return render_template("register.html", error=error)
         passwrd = str(request.form['password1'])
-        if passwrd == "":
-            error = "Please enter a password"
+        if len(passwrd) < 8:
+            error = "Password must be at least 8 characters"
             return render_template("register.html", error=error)
         confirmPass = str(request.form['password2'])
         if not pass_valid(passwrd, confirmPass):
@@ -368,6 +384,11 @@ def registrationForm():
         secret = str(request.form['name'])
         if secret == "":
             error = "Please enter a secret answer"
+            return render_template("register.html", error=error)
+        seller = str(request.form['seller'])
+        possibleOptions=['y','n','yes','no']
+        if seller.lower() not in possibleOptions:
+            error = "Please indicate if you would like to be a seller"
             return render_template("register.html", error=error)
         name = "'" + str(name) + "'"
         email = "'" + str(email) + "'"
@@ -387,12 +408,18 @@ def registrationForm():
         cur.execute(query2)
         version2 = cur.fetchall()
         if len(version2) == 1:
-            error = 'Username already in use, try Forgot Password.'
+            error = 'Username already in use, pick another one or try Forgot Password.'
             return render_template("register.html", error=error)
         else:
             cur = conn.cursor()
             insert = "INSERT INTO Users VALUES(%s, %s, %s, %s, %s, 0, False, %s);" % (username, passwrd, name, email, address, secret)
             cur.execute(insert)
+            if seller.lower() == 'y' or seller.lower()=='yes':
+                insert2= "INSERT INTO Sellers VALUES (%s);" % (username)
+                cur.execute(insert2)
+            if seller.lower() =='n' or seller.lower() == 'no':
+                insert3= "INSERT INTO Buyers VALUES (%s);" % (username)
+                cur.execute(insert3)
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
 

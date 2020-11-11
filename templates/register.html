@@ -30,11 +30,17 @@
           <input type="text" placeholder="Username" name="username" value="{{
           request.form.username }}">
           <br>
+          <h5>Create a password. Must be at least 8 characters.</h5>
          <input type="password" placeholder="Password" name="password1" value="{{
           request.form.password1 }}">
           <br>
           <input type="password" placeholder="Confirm Password" name="password2" value="{{
           request.form.password2 }}">
+          <br>
+          <h3>Would you like to register as a seller?</h3>
+          <h4>Type 'Y' for Yes or 'N' for No</h4>
+          <input type="text" placeholder="Y or N" name="seller" value="{{
+          request.form.seller }}">
           <br>
           <h4>Security Question: What is the name of your childhood best friend?</h4>
           <input type="text" placeholder="Answer" name="secret" value="{{
@@ -44,16 +50,6 @@
     {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
-    <h3>Would you like to register as a seller?</h3>
-    <form action="/action_page.php", method="post">
-      <label for="cars">Select an option</label>
-      <select name="seller" id="seller">
-        <option value="No">No</option>
-          <option value="Yes">Yes</option>
-      </select>
-      <br><br>
-      <input type="submit" value="Submit">
-    </form>
     </div>
 <div class="footer">
   <h3>A CS316 Project</h3>
