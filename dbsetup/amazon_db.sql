@@ -63,6 +63,7 @@ CREATE TABLE Cart
 username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
+seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(seller_username),
 PRIMARY KEY(username, item_id));
 
 CREATE VIEW CartSummary AS 
@@ -122,11 +123,11 @@ BEGIN
   IF (TG_OP = 'INSERT') THEN
   	UPDATE SellsItem
   	SET stock = stock - NEW.quantity
-  	WHERE item_id = NEW.item_id;
+  	WHERE item_id = NEW.item_id AND seller_username = NEW.seller_username;
   ELSIF (TG_OP = 'UPDATE') THEN
   	UPDATE SellsItem
   	SET stock = stock - (NEW.quantity - OLD.quantity)
-  	WHERE item_id = NEW.item_id;
+  	WHERE item_id = NEW.item_id AND seller_username = NEW.seller_username;
   END IF;
   RETURN NULL;
 END;
@@ -210,11 +211,11 @@ CREATE TRIGGER TG_ReviewNotSeller
 CREATE FUNCTION TF_Check_stock_item_on_cart_add() RETURNS TRIGGER AS $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
-    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity > S.stock AND NEW.item_id = S.item_id) THEN
+    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity > S.stock AND NEW.item_id = S.item_id AND NEW.seller_username = S.seller_username) THEN
       RAISE EXCEPTION 'there is not enough remaining stock of item % to purchase % of that item', NEW.item_id, NEW.quantity;
     END IF;
   ELSIF (TG_OP = 'UPDATE') THEN
-    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity - OLD.quantity > S.stock AND NEW.item_id = S.item_id) THEN
+    IF EXISTS (SELECT * FROM SellsItem S WHERE NEW.quantity - OLD.quantity > S.stock AND NEW.item_id = S.item_id AND NEW.seller_username = S.seller_username) THEN
       RAISE EXCEPTION 'there is not enough remaining stock of item % to purchase % of that item', NEW.item_id, NEW.quantity;
     END IF;
   END IF;
