@@ -446,6 +446,7 @@ def registrationForm():
             if seller.lower() =='n' or seller.lower() == 'no':
                 insert3= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert3)
+            flash('Registered successfully')
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
 
