@@ -252,17 +252,37 @@ def logout():
     flash('You have logged out!')
     return redirect(url_for('login'))
 
-@app.route("/addToCart")
+@app.route("/addToCart", methods = ['GET', 'POST'])
 @login_required
 def addToCart():
     if request.method == 'POST':
+        itemID = int(request.form['itemid'])
         username = session['username']
-        quantity = request.args['quantity']
-        seller = request.args['seller']
-
-
-    print('')
-    return redirect(url_for('root'))
+        username = "'"+str(username)+"'"
+        quantity = int(request.form['quantity'])
+        price = float(request.form['price'])
+        seller = request.form['seller']
+        seller = "'"+str(seller)+"'"
+        cur = conn.cursor()
+        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d" % (username, itemID)
+        cur.execute(checkAlreadyinCart)
+        quant = cur.fetchall()
+        if len(quant) != 0:
+            quantity += int(quant[0][0])
+        cur = conn.cursor()
+        checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
+        cur.execute(checkEnoughBalance)
+        userBalance = float(cur.fetchall()[0][0])
+        if float(price)*float(quantity) > float(userBalance):
+            flash('You do not have enough money in balance to add this to cart!')
+            return render_template('cart.html')
+        else:
+            cur = conn.cursor()
+            addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
+            cur.execute(addCart)
+            flash("Item(s) added to cart!")
+            return render_template('cart.html')
+    return render_template('cart.html')
 
 @app.route("/cart", methods=['GET', 'POST'])
 @login_required
