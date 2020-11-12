@@ -26,8 +26,9 @@
 				<td><p>${{item.price_per_item}}</p></td>
 				<td><p>{{item.quantity}}</p></td>
 				<td> 
-					<form action="{{url_for('removeFromCart')}}">
+					<form action="{{url_for('removeFromCart')}}" method="POST">
 						<input type="hidden" id="itemid" name="itemid" value=item.item_id>
+						<input type="hidden" id="seller" name="seller" value=item.seller_username>
 						<input type="submit" value="Remove this item">
 					</form>
 				</td>
