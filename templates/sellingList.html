@@ -11,10 +11,8 @@
 			<tr>
 				<th>Item Image</th>
 				<th>Item Name</th>
-				<th>Buyer</th>
 				<th>Per-Unit Price</th>
-				<th>Count</th>
-				<th>Purchase Timestamp</th>
+				<th>Stock</th>
 			</tr>
 			{% for item in items %}
 			<tr>
@@ -23,7 +21,18 @@
 				<td><p>{{item.buyer_username}}</p></td>
 				<td><p>${{item.price_per_item}}</p></td>
 				<td><p>{{item.quantity}}</p></td>
-				<td><p>{{item.timestamp}}</a></p></td>
+				<td> 
+					<form action="{{url_for('editItem')}}" method="POST">
+						<input type="hidden" id="itemid" name="itemid" value=item.item_id>
+						<input type="submit" value="Edit this listing">
+					</form>
+				</td>
+				<td>
+					<form action="{{url_for('removeItem')}}" method="POST">
+						<input type="hidden" id="itemid" name="itemid" value=item.item_id>
+						<input type="submit" value="Remove this listing">
+					</form>
+				</td>
 			</tr>
 			{% endfor %}
 		</table>
