@@ -57,7 +57,7 @@ item_id  INTEGER NOT NULL REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
 stock INTEGER NOT NULL CHECK(stock >= 0),
-PRIMARY KEY(name, item_id));
+PRIMARY KEY(seller_username, item_id));
 
 CREATE TABLE Cart
 (item_id INTEGER NOT NULL REFERENCES Items(item_id),
