@@ -48,7 +48,8 @@ CREATE TABLE OrderItems
 item_id INTEGER NOT NULL REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-PRIMARY KEY(order_id, item_id));
+seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(seller_username),
+PRIMARY KEY(order_id, item_id, seller_username));
 
 CREATE TABLE SellsItem
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
@@ -63,7 +64,7 @@ CREATE TABLE Cart
 username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
 price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
-seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
+seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(seller_username),
 PRIMARY KEY(username, item_id, seller_username));
 
 CREATE VIEW CartSummary AS 
