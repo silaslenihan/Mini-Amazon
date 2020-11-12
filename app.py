@@ -301,7 +301,7 @@ def addToCart():
             else:
                 cur = conn.cursor()
                 print(price)
-                addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
+                addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
                 cur.execute(addCart)
                 conn.commit()
                 flash("Item(s) added to cart!")
@@ -322,18 +322,24 @@ def cart():
                "UI.item_id = I.item_id) SELECT * FROM user_items_with_info;" % username
     cur.execute(getItems)
     cartItems = cur.fetchall()
+    print(cartItems)
     items = []
     cur = conn.cursor()
     cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
     cur.execute(cost)
-    totalCost = float(cur.fetchall()[0][0])
-    totalCost = "{:.2f}".format(totalCost)
+    try:
+        totalCost = float(cur.fetchall()[0][0])
+        totalCost = "{:.2f}".format(totalCost)
+    except:
+        totalCost=0
+        totalCost = "{:.2f}".format(totalCost)
     for row in cartItems:
         data_row = {}
         data_row['item_id'] = row[0]
         data_row['seller_username'] = row[1]
         data_row['quantity'] = row[2]
         data_row['price_per_item'] = row[3]
+        print(row[3])
         data_row['name'] = row[4]
         data_row['cat_name'] = row[5]
         data_row['avg_rate'] = row[6]
@@ -530,7 +536,9 @@ def registrationForm():
             cur.execute(insert)
             if seller.lower() == 'y' or seller.lower()=='yes':
                 insert2= "INSERT INTO Sellers VALUES (%s);" % (username)
+                insert4= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert2)
+                cur.execute(insert4)
             if seller.lower() =='n' or seller.lower() == 'no':
                 insert3= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert3)
