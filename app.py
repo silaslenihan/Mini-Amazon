@@ -256,6 +256,7 @@ def logout():
 @login_required
 def addToCart():
     if request.method == 'POST':
+        alreadyAdded=False
         itemID = int(request.form['itemid'])
         username = session['username']
         username = "'"+str(username)+"'"
@@ -264,10 +265,11 @@ def addToCart():
         seller = request.form['seller']
         seller = "'"+str(seller)+"'"
         cur = conn.cursor()
-        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d" % (username, itemID)
+        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d and seller_username=%s" % (username, itemID, seller)
         cur.execute(checkAlreadyinCart)
         quant = cur.fetchall()
         if len(quant) != 0:
+            alreadyAdded=True
             quantity += int(quant[0][0])
         cur = conn.cursor()
         checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
@@ -275,14 +277,23 @@ def addToCart():
         userBalance = float(cur.fetchall()[0][0])
         if float(price)*float(quantity) > float(userBalance):
             flash('You do not have enough money in balance to add this to cart!')
-            return render_template('cart.html')
+            return redirect(url_for('cart'))
         else:
-            cur = conn.cursor()
-            addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
-            cur.execute(addCart)
-            flash("Item(s) added to cart!")
-            return render_template('cart.html')
-    return render_template('cart.html')
+            if alreadyAdded:
+                cur = conn.cursor()
+                updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s" % (quantity, username, itemID, seller)
+                cur.execute(updateCart)
+                conn.commit()
+                flash("Item(s) added to cart!")
+                return redirect(url_for('cart'))
+            else:
+                cur = conn.cursor()
+                addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
+                cur.execute(addCart)
+                conn.commit()
+                flash("Item(s) added to cart!")
+                return redirect(url_for('cart'))
+    return redirect(url_for('cart'))
 
 @app.route("/cart", methods=['GET', 'POST'])
 @login_required
