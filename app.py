@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 import json
 import os
 import psycopg2
-from datetime import date
+import datetime
 
 
 
@@ -317,19 +317,32 @@ def addreview():
     if request.method == 'POST':
         username= session['username']
         username = "'" +str(username)+"'"
-        day=str(date.today())
-        day = "'"+str(day)+"'"
+        dt_string = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        day = "'"+str(dt_string)+"'"
         content = str(request.form['body'])
         content = "'"+str(content)+"'"
         stars= float(request.form['numstars'])
-        addRev = "INSERT INTO Reviews VALUES (%s, %d, %s, %s, %d);" % (username, int(item_id), day, content, stars)
-        cur=conn.cursor()
-        try:
-            cur.execute(addRev)
-            flash("Review submitted successfully")
-        except:
+        cur = conn.cursor()
+        checkSeller = "SELECT * FROM SellsItem WHERE seller_username = %s AND item_id=%d;" % (username, int(item_id))
+        cur.execute(checkSeller)
+        checker=cur.fetchall()
+        if len(checker)>0:
             flash("Cannot review an item you are selling!")
-        return redirect(url_for('productDescription', itemid=item_id))
+            return redirect(url_for('productDescription', itemid=item_id))
+        else:
+            cur = conn.cursor()
+            AlreadyReviewToday = "SELECT * FROM Reviews WHERE username = %s AND item_id=%d AND date_time=%s;" % (username, int(item_id), day)
+            cur.execute(AlreadyReviewToday)
+            checker2=cur.fetchall()
+            if len(checker2)>0:
+                flash("Cannot review an item twice on same day!")
+                return redirect(url_for('productDescription', itemid=item_id))
+            else:
+                cur = conn.cursor()
+                addRev = "INSERT INTO Reviews VALUES (%s, %d, %s, %s, %d);" % (username, int(item_id), day, content, stars)
+                cur.execute(addRev)
+                flash("Review submitted successfully")
+                return redirect(url_for('productDescription', itemid=item_id))
     getName = "SELECT name FROM Items WHERE item_id = %d;" % int(item_id)
     cur = conn.cursor()
     cur.execute(getName)
@@ -358,6 +371,7 @@ def addbalance():
         cur = conn.cursor()
         update = "UPDATE Users SET balance = %d WHERE username = %s;" % (balance, username)
         cur.execute(update)
+        balance = "{:.2f}".format(balance)
         session['balance']=str(balance)
         return render_template("addBalance.html", error=error)
     return render_template("addBalance.html", error=error)
