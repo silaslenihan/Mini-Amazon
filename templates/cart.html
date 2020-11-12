@@ -5,7 +5,7 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 	<h3>Your Cart</h3>
-	<h4>Total Cost: $40.00 </h4>
+	<h4>Total Cost: ${{cost}} </h4>
 	<form action="{{url_for('cart')}}" method="POST">
 		<input type="submit" value="Checkout">
 	</form>
