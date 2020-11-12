@@ -1,0 +1,28 @@
+<html>
+<head></head>
+<body>
+
+	{% extends 'layout.html' %}
+	{% block content %}
+	<div>
+		<h3> Adding item listing for {{ session['username']}} </h3>
+		<form action="{{url_for('addItem')}}" method="POST">
+			<label for="name"><b>Name: </b></label>
+			<input type="text" required id="name" name="name">
+			<label for="image"><b>Upload Item Image: </b></label>
+			<input type="file" required id="image" name="image" accept="image/png, image/jpeg">
+			<label for="description"><b>Description: </b></label>
+			<input type="text" required id="description" name="description">
+			<label for="category"><b>Category: </b></label>
+			<input type="text" required id="category" name="category">
+			<label for="price"><b>Price: </b></label>
+			<input type="number" required id="price" name="price" step=0.01 min=0>
+			<label for="count"><b>Count: </b></label>
+			<input type="number" required id="count" name="count" step=1 min=0>
+			<input type="submit" value="Proceed">
+		</form>
+	</div>
+
+	{% endblock %}
+
+</html>

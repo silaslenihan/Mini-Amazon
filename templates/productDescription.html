@@ -10,7 +10,10 @@
   		<div class="column" style="margin-left:5px">
   			<h2>{{data.item_name}}</h2>
   			<h4>{{data.description}}</h4>
-  			<p>{{data.rating}} Stars</p>
+  			<p> {% if data.rating == 0 %} No reviews yet
+            {% else %} {{data.rating}} Stars
+            {% endif %}
+          </p>
   			<table class="results">
   				<tr>
   					<th>Seller</th>
