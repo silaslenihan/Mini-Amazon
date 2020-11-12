@@ -25,10 +25,10 @@
     <p>Current balance: <b>${{ session['balance'] }}</b></p> 
     <a href="{{ url_for('getUserDetails') }}"> View Profile</a>
     <a href="{{url_for('addbalance')}}">Add Balance</a>
-    <a href="#">Purchase History</a>
+    <a href="{{url_for('purchase_history')}}">Purchase History</a>
     {% if session['seller'] %}
       <a href="#">Add/Modify Item</a>
-      <a href="#">Selling History</a>
+      <a href="{{url_for('selling_history')}}">Selling History</a>
     {% endif %}
     <a href="{{url_for('logout')}}"> Logout </a>
   </div>
