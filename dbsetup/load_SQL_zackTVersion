@@ -46,10 +46,10 @@ INSERT INTO Reviews VALUES('sarah1',5,'2020-04-04','This is cool!',4.2);
 INSERT INTO Reviews VALUES('mikey2',8,'2020-04-04','This is cool!',4.1);
 
 
-INSERT INTO OrderItems VALUES(1,1,'Media',1);
-INSERT INTO OrderItems VALUES(2,2,'Clothing',1);
-INSERT INTO OrderItems VALUES(3,3,'Media',1);
-INSERT INTO OrderItems VALUES(4,4,'Media',1);
+INSERT INTO OrderItems VALUES(1,1,'Media',1,'evan7');
+INSERT INTO OrderItems VALUES(2,2,'Clothing',1,'evan7');
+INSERT INTO OrderItems VALUES(3,3,'Media',1,'evan7');
+INSERT INTO OrderItems VALUES(4,4,'Media',1,'evan7');
 
 
 INSERT INTO SellsItem VALUES('evan7', 1, 'Media', 19.99, 10);

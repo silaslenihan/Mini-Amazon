@@ -112,6 +112,17 @@ def search_results():
         data.append(data_row)
     return render_template('result.html', item = data)
 
+@app.route('/purchaseHistory', methods=['GET', 'POST'])
+@login_required
+def purchase_history():
+    return render_template('purchaseHistory.html',item='')
+
+@app.route('/sellingHistory', methods=['GET', 'POST'])
+@login_required
+def selling_history():
+    return render_template('sellingHistory.html',item='')
+
+
 
 @app.route("/productDescription", methods=['GET', 'POST'])
 @login_required

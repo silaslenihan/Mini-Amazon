@@ -48,7 +48,8 @@ CREATE TABLE OrderItems
 item_id INTEGER NOT NULL REFERENCES Items(item_id),
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 quantity INTEGER NOT NULL CHECK(quantity >= 0),
-PRIMARY KEY(order_id, item_id));
+seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
+PRIMARY KEY(order_id, item_id, seller_username));
 
 CREATE TABLE SellsItem
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
