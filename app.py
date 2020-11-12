@@ -130,7 +130,6 @@ def productDescription():
     # Make sure this still aligns with updated rating method
     placetaker = ''
     item_id = int(request.args['itemid'])
-    print(item_id)
     cur = conn.cursor()
     # get matching item from db
     query1 = "SELECT * FROM Items WHERE item_id = %d;" % int(item_id)
@@ -175,8 +174,6 @@ def productDescription():
         "sellers_list": seller_list,
         "reviews_list": reviews_list
     }
-    print(data)
-
     return render_template("productDescription.html", data =data)
 
 @app.route("/add")
@@ -245,7 +242,6 @@ def login():
             else:
                 session['seller']=True
             flash('You have logged in! Hi '+str(version[0][2])+'!')
-            print(version[0])
             nameID = version[0][2]
             usernameID = version[0][0]
             return redirect(url_for('root'))
@@ -273,7 +269,6 @@ def addToCart():
         username = "'"+str(username)+"'"
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
-        print(price)
         seller = request.form['seller']
         seller = "'"+str(seller)+"'"
         cur = conn.cursor()
@@ -300,7 +295,6 @@ def addToCart():
                 return redirect(url_for('cart'))
             else:
                 cur = conn.cursor()
-                print(price)
                 addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
                 cur.execute(addCart)
                 conn.commit()
@@ -322,7 +316,6 @@ def cart():
                "UI.item_id = I.item_id) SELECT * FROM user_items_with_info;" % username
     cur.execute(getItems)
     cartItems = cur.fetchall()
-    print(cartItems)
     items = []
     cur = conn.cursor()
     cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
@@ -339,7 +332,6 @@ def cart():
         data_row['seller_username'] = row[1]
         data_row['quantity'] = row[2]
         data_row['price_per_item'] = row[3]
-        print(row[3])
         data_row['name'] = row[4]
         data_row['cat_name'] = row[5]
         data_row['avg_rate'] = row[6]
@@ -347,14 +339,25 @@ def cart():
         items.append(data_row)
     return render_template('cart.html', items=items, cost=totalCost)
 
-@app.route("/removeFromCart")
+@app.route("/removeFromCart", methods=['GET', 'POST'])
 @login_required
 def removeFromCart():
     username = "'" + str(session['username']) + "'"
-    cur = conn.cursor()
-
-    return redirect(url_for('root'))
-
+    if request.method == 'POST':
+        itemID = request.form['item_id']
+        print(itemID)
+        seller = "'"+str(request.form['seller'])+"'"
+        print(seller)
+        quantity = (request.form['quantity'])
+        print(quantity)
+        cur = conn.cursor()
+        removeItems="DELETE FROM Cart WHERE username=%s AND item_id=%d AND seller_username=%s;" % (username, int(itemID), seller)
+        cur.execute(removeItems)
+        addBacktoStock="UPDATE SellsItem SET stock=stock+%d WHERE seller_username=%s AND item_id=%d;" % (int(quantity), seller, int(itemID))
+        cur.execute(addBacktoStock)
+        flash("Item(s) removed from cart!")
+        return redirect(url_for('cart'))
+    return redirect(url_for('cart'))
 
 @app.route("/purchase", methods=['GET', 'POST'])
 @login_required
