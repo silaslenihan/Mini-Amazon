@@ -310,6 +310,11 @@ def cart():
     cur.execute(getItems)
     cartItems = cur.fetchall()
     items = []
+    cur = conn.cursor()
+    cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
+    cur.execute(cost)
+    totalCost = float(cur.fetchall()[0][0])
+    totalCost = "{:.2f}".format(totalCost)
     for row in cartItems:
         data_row = {}
         data_row['item_id'] = row[0]
@@ -321,7 +326,7 @@ def cart():
         data_row['avg_rate'] = row[6]
         data_row['description'] = row[7]
         items.append(data_row)
-    return render_template('cart.html', items=items)
+    return render_template('cart.html', items=items, cost=totalCost)
 
 @app.route("/removeFromCart")
 @login_required
