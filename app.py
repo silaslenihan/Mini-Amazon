@@ -11,9 +11,9 @@ import datetime
 
 
 conn = psycopg2.connect(
-user="rwrcuqxo",
-password="fjAbl6HJjop7bDM9L3zfMZ9c_yT9wdM8",
-host="lallah.db.elephantsql.com",
+user="hshgoekz",
+password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
+host="hattie.db.elephantsql.com",
 port="5432"
 )
 cur = conn.cursor()
@@ -262,6 +262,7 @@ def addToCart():
         username = "'"+str(username)+"'"
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
+        print(price)
         seller = request.form['seller']
         seller = "'"+str(seller)+"'"
         cur = conn.cursor()
@@ -288,6 +289,7 @@ def addToCart():
                 return redirect(url_for('cart'))
             else:
                 cur = conn.cursor()
+                print(price)
                 addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
                 cur.execute(addCart)
                 conn.commit()
@@ -331,9 +333,8 @@ def cart():
 @app.route("/removeFromCart")
 @login_required
 def removeFromCart():
-
-    # REMOVE item_id from user's cart based on their username
-    # How do we get username?
+    username = "'" + str(session['username']) + "'"
+    cur = conn.cursor()
 
     return redirect(url_for('root'))
 
