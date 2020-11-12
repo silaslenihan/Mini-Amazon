@@ -255,8 +255,11 @@ def logout():
 @app.route("/addToCart")
 @login_required
 def addToCart():
-    # Add item_id to user's cart based on their userID
-    # One user can only have one cart at a time
+    if request.method == 'POST':
+        username = session['username']
+        quantity = request.args['quantity']
+        seller = request.args['seller']
+
 
     print('')
     return redirect(url_for('root'))
@@ -309,7 +312,7 @@ def pass_valid(p1, p2):
         return True
     return False
 
-import datetime
+
 @app.route("/addreview", methods = ['GET', 'POST'])
 @login_required
 def addreview():
