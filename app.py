@@ -272,34 +272,24 @@ def addToCart():
         seller = request.form['seller']
         seller = "'"+str(seller)+"'"
         cur = conn.cursor()
-        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d and seller_username=%s" % (username, itemID, seller)
+        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d and seller_username=%s;" % (username, itemID, seller)
         cur.execute(checkAlreadyinCart)
         quant = cur.fetchall()
         if len(quant) != 0:
             alreadyAdded=True
             quantity += int(quant[0][0])
-        cur = conn.cursor()
-        checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
-        cur.execute(checkEnoughBalance)
-        userBalance = float(cur.fetchall()[0][0])
-        if float(price)*float(quantity) > float(userBalance):
-            flash('You do not have enough money in balance to add this to cart!')
+        if alreadyAdded:
+            cur = conn.cursor()
+            updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s;" % (quantity, username, itemID, seller)
+            cur.execute(updateCart)
+            flash("Item(s) added to cart!")
             return redirect(url_for('cart'))
         else:
-            if alreadyAdded:
-                cur = conn.cursor()
-                updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s" % (quantity, username, itemID, seller)
-                cur.execute(updateCart)
-                conn.commit()
-                flash("Item(s) added to cart!")
-                return redirect(url_for('cart'))
-            else:
-                cur = conn.cursor()
-                addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
-                cur.execute(addCart)
-                conn.commit()
-                flash("Item(s) added to cart!")
-                return redirect(url_for('cart'))
+            cur = conn.cursor()
+            addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
+            cur.execute(addCart)
+            flash("Item(s) added to cart!")
+            return redirect(url_for('cart'))
     return redirect(url_for('cart'))
 
 @app.route("/cart", methods=['GET', 'POST'])
@@ -362,13 +352,47 @@ def removeFromCart():
 @app.route("/purchase", methods=['GET', 'POST'])
 @login_required
 def purchase():
-    return render_template("reviews.html", error=msg)
+    username = "'" + str(session['username']) + "'"
+    cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
+    cur=conn.cursor()
+    cur.execute(cost)
+    try:
+        totalCost = float(cur.fetchall()[0][0])
+    except:
+        totalCost = 0
+    #Check if user has enough balance
+    cur=conn.cursor()
+    checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
+    cur.execute(checkEnoughBalance)
+    userBalance = float(cur.fetchall()[0][0])
+    if totalCost>userBalance:
+        flash("You do not have enough funds in balance to complete this order!")
+        return redirect(url_for('cart'))
+    #Update the user balance
+    updateBalance = "UPDATE Users Set balance = balance - %.2f WHERE username = %s;" % (totalCost, username)
+    session['balance'] = "{:.2f}".format(userBalance - totalCost)
+    print(totalCost)
+    # Add money to respective seller
+    cur= conn.cursor()
+    getCartItems = "SELECT * FROM Cart WHERE username = %s;" % username
+    cur.execute(getCartItems)
+    itemsList = cur.fetchall()
+    for row in itemsList:
+        newMoney = float(row[2]*row[3])
+        seller = "'"+str(row[4])+"'"
+        updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s" % (newMoney, seller)
+        cur.execute(updateSellerBalance)
+        # Add each item to order items
+        # Waiting on updated ORDERS table
+    # Clear cart
+    clearCart = "DELETE FROM Cart WHERE username = %s" % username
+    cur.execute(clearCart)
+    return redirect(url_for('purchase_history'))
 
 def pass_valid(p1, p2):
     if p1 == p2:
         return True
     return False
-
 
 @app.route("/addreview", methods = ['GET', 'POST'])
 @login_required
@@ -546,6 +570,7 @@ def registrationForm():
                 insert3= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert3)
             flash('Registered successfully')
+            conn.commit()
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
 
