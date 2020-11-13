@@ -199,8 +199,18 @@ def add():
 @app.route("/addItem", methods=["GET", "POST"])
 @login_required
 def addItem():
-    # Seller adds a new product to sell, this will involve INSERT into the items table,
-    # Check whether the product is already sold
+    if request.method == 'POST':
+        item_name = str(request.form['name'])
+        image = str(request.form['image'])
+        description = str(request.form['description'])
+        category = str(request.form['category'])
+        price str(request.form['price'])
+        count = str(request.form['count'])
+        username = session['username']
+        item_id = ""
+
+        query = f"INSERT INTO SellsItem VALUES({username},{item_id},{category},{price},{count})"
+        #passwrd = str(request.form['password'])
     data = ""
     return render_template("addItem.html",data=data)
 
