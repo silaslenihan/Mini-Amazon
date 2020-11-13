@@ -35,6 +35,9 @@
   				</tr>
   				{% endfor %}
   			</table>
+        {% if session['seller'] and  not sellsItem %}
+          <a href="{{url_for('addItem', itemid = data.item_id, itemname = data.item_name)}}">Add a listing for this item </a>
+        {% endif %}
   		</div>
 	</div>
 	<h3 class="bodytext">Reviews</h3>

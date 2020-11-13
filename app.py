@@ -156,9 +156,12 @@ def productDescription():
     cur.execute(query2)
     results2 = cur.fetchall()
     # get list of sellers who sell that item
+    currUserSellsItem = False
     seller_list = []
     for result in results2:
         seller = {}
+        if (result[0]==session['username']):
+            currUserSellsItem = True
         seller['username'] = result[0]
         seller['price'] = result[3]
         seller['stock'] = result[4]
@@ -186,7 +189,7 @@ def productDescription():
         "sellers_list": seller_list,
         "reviews_list": reviews_list
     }
-    return render_template("productDescription.html", data =data)
+    return render_template("productDescription.html", data =data, sellsItem = currUserSellsItem)
 
 @app.route("/add")
 @login_required
@@ -204,15 +207,16 @@ def addItem():
         image = str(request.form['image'])
         description = str(request.form['description'])
         category = str(request.form['category'])
-        price str(request.form['price'])
+        price = str(request.form['price'])
         count = str(request.form['count'])
         username = session['username']
         item_id = ""
 
         query = f"INSERT INTO SellsItem VALUES({username},{item_id},{category},{price},{count})"
         #passwrd = str(request.form['password'])
-    data = ""
-    return render_template("addItem.html",data=data)
+    itemid = request.args.get('itemid', -1)
+    itemname = request.args.get('itemname', '')
+    return render_template("addItem.html",itemid=itemid,itemname=itemname)
 
 @app.route("/modifyItem", methods=["GET", "POST"])
 @login_required
