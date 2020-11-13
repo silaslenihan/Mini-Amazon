@@ -34,6 +34,19 @@ CREATE TABLE Reviews
  rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
  PRIMARY KEY(username,item_id,date_time));
 
+CREATE TABLE OrderEntry
+( order_id INTEGER NOT NULL,
+  order_entry_id INTEGER NOT NULL,
+  buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
+  payment_amount DECIMAL(10, 2) NOT NULL,
+  date_of_purchase DATE NOT NULL,
+  date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
+  item_id INTEGER NOT NULL REFERENCES Items(item_id),
+  cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
+  quantity INTEGER NOT NULL CHECK(quantity >= 0),
+  seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
+PRIMARY KEY(order_id, order_entry_id));
+
 CREATE TABLE Orders
 (buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
  order_id INTEGER NOT NULL,
@@ -84,7 +97,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER TG_Check_balance_enough_on_order
-  BEFORE INSERT ON Orders
+  BEFORE INSERT ON OrderEntry
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Check_balance_enough_on_order();
 
