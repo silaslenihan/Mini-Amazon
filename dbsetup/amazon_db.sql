@@ -74,21 +74,6 @@ user_list AS (SELECT U.username as username FROM Users U)
 SELECT COALESCE(U.username,C.username) AS username, COALESCE(C.total_price,0) AS total_price, COALESCE(C.total_quantity,0) AS total_quantity FROM user_list U FULL OUTER JOIN cart_sum C ON U.username = C.username;
 
 
-CREATE FUNCTION TF_Modify_buyer_balance_on_order() RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE Users
-  SET balance = balance - NEW.payment_amount
-  WHERE username = NEW.buyer_username;
-
-  RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER TG_Modify_buyer_balance_on_order
-  AFTER INSERT ON Orders
-  FOR EACH ROW
-  EXECUTE PROCEDURE TF_Modify_buyer_balance_on_order();
-
 CREATE FUNCTION TF_Check_balance_enough_on_order() RETURNS TRIGGER AS $$
 BEGIN
   IF NOT EXISTS(SELECT * FROM Users U WHERE U.balance >= NEW.payment_amount AND U.username = NEW.buyer_username) THEN
@@ -102,21 +87,6 @@ CREATE TRIGGER TG_Check_balance_enough_on_order
   BEFORE INSERT ON Orders
   FOR EACH ROW
   EXECUTE PROCEDURE TF_Check_balance_enough_on_order();
-
-
-CREATE FUNCTION TF_Check_balance_enough() RETURNS TRIGGER AS $$
-BEGIN
-	IF NOT EXISTS(SELECT * FROM Users U, CartSummary CS WHERE U.balance >= CS.total_price + NEW.quantity*NEW.price_per_item AND U.username = NEW.username AND U.username = CS.username) THEN
-	  RAISE EXCEPTION 'The balance of User % is not high enough to afford this item.', NEW.username;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER TG_Check_balance_enough
-  BEFORE INSERT ON Cart
-  FOR EACH ROW
-  EXECUTE PROCEDURE TF_Check_balance_enough();
 
 
 CREATE FUNCTION TF_Modify_stock_item_on_cart_add() RETURNS TRIGGER AS $$
