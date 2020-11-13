@@ -26,15 +26,6 @@ avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
 total_ratings INTEGER NOT NULL,
 description VARCHAR(256) NOT NULL);
 
-CREATE TABLE Orders
-(buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
- order_id INTEGER NOT NULL,
- payment_amount DECIMAL(10, 2) NOT NULL,
- date_of_purchase DATE NOT NULL,
- date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
- PRIMARY KEY(buyer_username,order_id),
- UNIQUE(order_id));
-
 CREATE TABLE Reviews 
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
  item_id INTEGER NOT NULL REFERENCES Items(item_id),
@@ -43,6 +34,15 @@ CREATE TABLE Reviews
  rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
  PRIMARY KEY(username,item_id,date_time));
 
+CREATE TABLE Orders
+(buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
+ order_id INTEGER NOT NULL,
+ payment_amount DECIMAL(10, 2) NOT NULL,
+ date_of_purchase DATE NOT NULL,
+ date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
+ PRIMARY KEY(buyer_username,order_id),
+ UNIQUE(order_id));
+             
 CREATE TABLE OrderItems
 (order_id INTEGER NOT NULL REFERENCES Orders(order_id),
 item_id INTEGER NOT NULL REFERENCES Items(item_id),
