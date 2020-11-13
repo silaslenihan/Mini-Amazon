@@ -12,6 +12,7 @@
 		for {{ session['username']}} </h3>
 		<form action="{{url_for('addItem')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{itemid}}>
+			{% if itemid==-1 %}
 			<label for="name"><b>Name: </b></label>
 			<input type="text" required id="name" name="name">
 			<label for="image"><b>Upload Item Image: </b></label>
@@ -20,6 +21,7 @@
 			<input type="text" required id="description" name="description">
 			<label for="category"><b>Category: </b></label>
 			<input type="text" required id="category" name="category">
+			{% endif %}
 			<label for="price"><b>Price: </b></label>
 			<input type="number" required id="price" name="price" step=0.01 min=0>
 			<label for="count"><b>Count: </b></label>
