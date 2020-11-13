@@ -47,22 +47,7 @@ CREATE TABLE OrderEntry
   seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
 PRIMARY KEY(order_id, order_entry_id));
 
-CREATE TABLE Orders
-(buyer_username VARCHAR(256) NOT NULL REFERENCES Buyers(username),
- order_id INTEGER NOT NULL,
- payment_amount DECIMAL(10, 2) NOT NULL,
- date_of_purchase DATE NOT NULL,
- date_of_delivery DATE NOT NULL CHECK(date_of_delivery >= date_of_purchase),
- PRIMARY KEY(buyer_username,order_id),
- UNIQUE(order_id));
-             
-CREATE TABLE OrderItems
-(order_id INTEGER NOT NULL REFERENCES Orders(order_id),
-item_id INTEGER NOT NULL REFERENCES Items(item_id),
-cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
-quantity INTEGER NOT NULL CHECK(quantity >= 0),
-seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
-PRIMARY KEY(order_id, item_id, seller_username));
+
 
 CREATE TABLE SellsItem
 (seller_username VARCHAR(256) NOT NULL REFERENCES Sellers(username),
