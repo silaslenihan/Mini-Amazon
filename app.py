@@ -9,7 +9,12 @@ import psycopg2
 import datetime
 
 
-
+# TODO:
+# -selling list 
+# -modify item
+# -add item
+# -remove item
+# -selling history
 conn = psycopg2.connect(
 user="hshgoekz",
 password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
@@ -115,6 +120,9 @@ def search_results():
 @app.route('/purchaseHistory', methods=['GET', 'POST'])
 @login_required
 def purchase_history():
+    query = "SELECT * FROM OrderEntry"
+    cur.execute(query)
+    print(cur.fetchall())
     return render_template('purchaseHistory.html',item='')
 
 @app.route('/sellingHistory', methods=['GET', 'POST'])
@@ -189,8 +197,14 @@ def add():
 def addItem():
     # Seller adds a new product to sell, this will involve INSERT into the items table,
     # Check whether the product is already sold
+    data = ""
+    return render_template("addItem.html",data=data)
 
-    return redirect(url_for('root'))
+@app.route("/modifyItem", methods=["GET", "POST"])
+@login_required
+def modifyItem():
+    data = ""
+    return render_template("modifyItem.html",data=data)
 
 @app.route("/remove")
 @login_required
