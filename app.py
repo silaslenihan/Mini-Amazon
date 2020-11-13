@@ -130,6 +130,10 @@ def purchase_history():
 def selling_history():
     return render_template('sellingHistory.html',item='')
 
+@app.route('/sellingList', methods=['GET'])
+@login_required
+def sellingList():
+    return render_template('sellingList.html', item='')
 
 
 @app.route("/productDescription", methods=['GET', 'POST'])
