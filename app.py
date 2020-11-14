@@ -12,7 +12,6 @@ import datetime
 # TODO:
 # -selling list 
 # -modify item
-# -add item
 # -remove item
 # -selling history
 conn = psycopg2.connect(
@@ -139,7 +138,25 @@ def selling_history():
 @app.route('/sellingList', methods=['GET'])
 @login_required
 def sellingList():
-    return render_template('sellingList.html', item='')
+    username = session['username']
+    query = f"select * from SellsItem where seller_username = '{username}'"
+    cur.execute(query)
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        item_id = result[1]
+        query1 = f"select name from Items where item_id = {item_id}"
+        cur.execute(query1)
+        item_name = cur.fetchall()[0][0]
+        data_row = {}
+        data_row['item_image'] = ''
+        data_row['item_name'] = item_name
+        data_row['price'] = result[3]
+        data_row['stock'] = result[4]
+        data.append(data_row)
+
+    print(data)
+    return render_template('sellingList.html', data=data)
 
 
 @app.route("/productDescription", methods=['GET', 'POST'])
@@ -239,6 +256,7 @@ def addItem():
             query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
             cur.execute(query4)
         flash("Item sucessfully listed.")
+        conn.commit()
         
 
         
