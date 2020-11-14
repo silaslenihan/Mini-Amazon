@@ -152,6 +152,7 @@ def selling_history():
         data_row['price'] = price
         data_row['count'] = count
         data_row['purchase_timestamp'] = result[4]
+        data_row['item_id'] = item_id
         data.append(data_row)
     print(data)
 
