@@ -120,9 +120,15 @@ def search_results():
 @app.route('/purchaseHistory', methods=['GET', 'POST'])
 @login_required
 def purchase_history():
-    query = "SELECT * FROM OrderEntry"
+    query = f"SELECT * FROM OrderEntry WHERE buyer_username = {session['username']}"
     cur.execute(query)
-    print(cur.fetchall())
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        data_row = {}
+        data_row['item_name'] = result['']
+
+
     return render_template('purchaseHistory.html',item='')
 
 @app.route('/sellingHistory', methods=['GET', 'POST'])
@@ -203,19 +209,44 @@ def add():
 @login_required
 def addItem():
     if request.method == 'POST':
-        item_name = str(request.form['name'])
-        image = str(request.form['image'])
-        description = str(request.form['description'])
-        category = str(request.form['category'])
+        item_id = request.form['itemid']
+        username = session['username']
         price = str(request.form['price'])
         count = str(request.form['count'])
-        username = session['username']
-        item_id = ""
+        if item_id == "-1":
+            # new item
+            query = "SELECT * FROM ITEMS ORDER BY item_id desc LIMIT 1"
+            cur.execute(query)
+            result = cur.fetchall()[0]
+            item_id = result[0] + 1
 
-        query = f"INSERT INTO SellsItem VALUES({username},{item_id},{category},{price},{count})"
-        #passwrd = str(request.form['password'])
+            item_name = str(request.form['name'])
+            image = str(request.form['image'])
+            description = str(request.form['description'])
+            category = str(request.form['category'])
+            price = str(request.form['price'])
+            count = str(request.form['count'])
+            # TODO: change 1 to 0 once DB guys fix the setup
+            query2 = f"INSERT INTO Items VALUES('{item_id}','{category}','{item_name}',1,0,'{description}');"
+            cur.execute(query2)
+            query1 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query1)
+        else:
+            query3 = f"SELECT cat_name from items where item_id = {item_id}"
+            cur.execute(query3)
+            category = cur.fetchall()[0][0]
+            
+            query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query4)
+        flash("Item sucessfully listed.")
+        
+
+        
+
     itemid = request.args.get('itemid', -1)
     itemname = request.args.get('itemname', '')
+
+    
     return render_template("addItem.html",itemid=itemid,itemname=itemname)
 
 @app.route("/modifyItem", methods=["GET", "POST"])
