@@ -14,16 +14,22 @@
   <p>Like Amazon, but without the bugs</p>
 </div>
 <br>
+{% if get_flashed_messages()|length > 0 %}
+<div class="flashed">
+  <p>
 {% for message in get_flashed_messages() %}
     {{ message }}
     {% endfor %}
-<div class="container">
+  </p>
+</div>
+{% endif %}
+<div class="main">
       <h1>Please login to your account</h1>
       <br>
       <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
+        <input type="text" required placeholder="Username" name="username" value="{{
           request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
+         <input type="password" required placeholder="Password" name="password" value="{{
           request.form.password }}">
         <input class="btn btn-default" type="submit" value="Login">
       </form>
@@ -31,13 +37,13 @@
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
 </div>
-<div class="forgot">
+<div class="main">
       <h4>Forgot your password? Click below!</h4>
       <form action="{{url_for('forgot')}}" method="get">
         <input class="btn btn-default" type="submit" value="Forgot Password">
       </form>
     </div>
-<div class="register">
+<div class="main">
       <h1>If you haven't already, register now!</h1>
       <br>
       <form action="{{url_for('registrationForm')}}" method="get">

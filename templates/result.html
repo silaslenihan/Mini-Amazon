@@ -3,7 +3,8 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-	<h3 class="bodytext">Showing {{item|length}} Result(s)</h3>
+	<div class="main">
+	<h3>Showing {{item|length}} Result(s)</h3>
 	<div>
 		<table class="results">
 			
@@ -25,6 +26,7 @@
 			{% endfor %}
 		</table>
 	</div>
+</div>
 	{% endblock %}
 </body>
 </html>

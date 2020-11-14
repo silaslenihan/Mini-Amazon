@@ -4,6 +4,7 @@
 
 	{% extends 'layout.html' %}
 	{% block content %}
+	<div class="main">
 	<h3>Your Cart</h3>
 	<h4>Total Cost: ${{cost}} </h4>
 	<form action="{{url_for('purchase')}}" method="POST">
@@ -37,6 +38,7 @@
 			{% endfor %}
 		</table>
 	</div>
+</div>
 	{% endblock %}
 
 </html>

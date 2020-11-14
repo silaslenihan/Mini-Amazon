@@ -37,10 +37,15 @@
   <a href="{{url_for('cart')}}" class="right">View Cart</a>
 
 </div>
-
+{% if get_flashed_messages()|length > 0 %}
+<div class="flashed">
+  <p>
 {% for message in get_flashed_messages() %}
     {{ message }}
     {% endfor %}
+  </p>
+</div>
+{% endif %}
 
 {% block content %}
 {% endblock %}

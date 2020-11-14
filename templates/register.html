@@ -13,38 +13,38 @@
   <h1>Sahara</h1>
   <p>Like Amazon, but without the bugs</p>
 </div>
-<div class="register">
+<div class="main">
       <h1>Sign up by email below</h1>
         <h3>When you click register, you will be redirected to the login page</h3>
       <br>
       <form action="" method="post">
-        <input type="text" placeholder="Name" name="name" value="{{
-          request.form.name }}">
+        <input type="text" required placeholder="Name" name="name" value="{{
+          request.form.name }}" maxlength="256">
           <br>
-          <input type="text" placeholder="Email" name="email" value="{{
-          request.form.email }}">
+          <input type="email" required placeholder="Email" name="email" value="{{
+          request.form.email }}" maxlength="256">
           <br>
-          <input type="text" placeholder="Address" name="address" value="{{
-          request.form.address }}">
+          <input type="text" required placeholder="Address" name="address" value="{{
+          request.form.address }}" maxlength="256">
           <br>
-          <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
+          <input type="text" required placeholder="Username" name="username" value="{{
+          request.form.username }}" maxlength="256">
           <br>
           <h5>Create a password. Must be at least 8 characters.</h5>
-         <input type="password" placeholder="Password" name="password1" value="{{
-          request.form.password1 }}">
+         <input type="password" required placeholder="Password" name="password1" value="{{
+          request.form.password1 }}" minlength="8" maxlength="256">
           <br>
-          <input type="password" placeholder="Confirm Password" name="password2" value="{{
-          request.form.password2 }}">
+          <input type="password" required placeholder="Confirm Password" name="password2" value="{{
+          request.form.password2 }}" minlength="8" maxlength="256">
           <br>
           <h3>Would you like to register as a seller?</h3>
           <h4>Type 'Y' for Yes or 'N' for No</h4>
-          <input type="text" placeholder="Y or N" name="seller" value="{{
+          <input type="text" required placeholder="Y or N" name="seller" value="{{
           request.form.seller }}">
           <br>
           <h4>Security Question: What is the name of your childhood best friend?</h4>
-          <input type="text" placeholder="Answer" name="secret" value="{{
-          request.form.secret }}">
+          <input type="text" required placeholder="Answer" name="secret" value="{{
+          request.form.secret }}" maxlength="256">
         <input class="btn btn-default" type="submit" value="Register">
       </form>
     {% if error %}

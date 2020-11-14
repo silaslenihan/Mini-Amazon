@@ -8,18 +8,19 @@
 		<h3> Editing {{ session['username']}}'s item listing for {{item.name}} </h3>
 		<form action="{{url_for('modifyItem')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
-			<label for="name"><b>Name: </b></label>
-			<input type="text" required id="name" name="name" value={{item.name}}>
-			<label for="image"><b>Upload a new Image (Optional): </b></label>
-			<input type="file" id="image" name="image" accept="image/png, image/jpeg">
-			<label for="description"><b>Description: </b></label>
-			<input type="text" required id="description" name="description" value={{item.description}}>
-			<label for="category"><b>Category: </b></label>
-			<input type="text" required id="category" name="category" value={{item.category}}>
-			<label for="price"><b>Price: </b></label>
-			<input type="number" required id="price" name="price" step=0.01 min=0 value={{item.price}}>
-			<label for="count"><b>Count: </b></label>
-			<input type="number" required id="count" name="count" step=1 min=0 value={{item.count}}>
+			<label for="name"><b>Name: </b></label><br>
+			<input type="text" required id="name" name="name" value={{item.name}} maxlength="256"><br><br>
+			<label for="image"><b>Upload a new Image (Optional): </b></label><br>
+			<input type="file" id="image" name="image" accept="image/png, image/jpeg"><br><br>
+			<label for="description"><b>Description: </b></label><br>
+			<textarea id="description" required name="description" rows="4" cols="50" maxlength="256" value="{{
+            item.description }}"></textarea><br><br>
+			<label for="category"><b>Category: </b></label><br>
+			<input type="text" required id="category" name="category" value={{item.category}} maxlength="256"><br><br>
+			<label for="price"><b>Price: </b></label><br>
+			<input type="number" required id="price" name="price" step=0.01 min=0 value={{item.price}}><br><br>
+			<label for="count"><b>Count: </b></label><br>
+			<input type="number" required id="count" name="count" step=1 min=0 value={{item.count}}><br><br>
 			<input type="submit" value="Proceed">
 		</form>
 	</div>

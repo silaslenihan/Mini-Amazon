@@ -3,17 +3,19 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-	<h3 class="bodytext">Adding review for {{ item.itemname }} </h3>
+	<div class="main">
+	<h3>Adding review for {{ item.itemname }} </h3>
 	<div>
 	<form action="{{url_for('addreview', itemid=item.itemid)}}" method="POST">
-			<label for="numstars"><b>Number of Stars: </b></label>
+			<label for="numstars"><b>Number of Stars: </b></label><br>
 			<input type="number" id="numstars" name="numstars" required step=0.1 min=1 max=5 value="{{
-            request.form.numstars }}">
-			<label for="body"><b>Write your review: </b></label>
-			<textarea id="body" name="body" rows="4" cols="50" maxlength="300" value="{{
-            request.form.body }}"></textarea>
+            request.form.numstars }}"><br><br>
+			<label for="body"><b>Write your review: </b></label><br>
+			<textarea id="body" name="body" rows="4" cols="50" maxlength="256" value="{{
+            request.form.body }}"></textarea><br><br>
 			<input type="submit">
 		</form>
 	</div>
+</div>
 	{% endblock %}
 </html>

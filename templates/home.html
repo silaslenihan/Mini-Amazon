@@ -3,7 +3,7 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-
+<div class="main">
 	<div class="search">
 		<form action="{{url_for('search_results')}}" method="GET" class="productSearch">
 			<label for="product"><b>Find a product:</b></label>
@@ -40,5 +40,6 @@
 
 		</table>
 	</div>
+</div>
 	{% endblock %}
 </html>

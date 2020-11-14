@@ -4,6 +4,7 @@
 
 	{% extends 'layout.html' %}
 	{% block content %}
+	<div class="main">
 	<div style="text-align: center">
 		<h3> Your current balance: ${{ session['balance']}} </h3>
 		<form action="{{url_for('addbalance')}}" method="POST">
@@ -13,9 +14,10 @@
 			<input type="submit">
 		</form>
     {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}
+        <p class="error"><strong>Error:</strong> {{ error }}</p>
       {% endif %}
 	</div>
+</div>
 	{% endblock %}
 
 </html>

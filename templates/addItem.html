@@ -4,7 +4,7 @@
 
 	{% extends 'layout.html' %}
 	{% block content %}
-	<div>
+	<div class="main">
 		<h3> Adding item listing 
 			{% if not itemid==-1 %}
 			to {{itemname}}
@@ -13,19 +13,20 @@
 		<form action="{{url_for('addItem')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{itemid}}>
 			{% if itemid==-1 %}
-			<label for="name"><b>Name: </b></label>
-			<input type="text" required id="name" name="name">
-			<label for="image"><b>Upload Item Image: </b></label>
-			<input type="file" required id="image" name="image" accept="image/png, image/jpeg">
-			<label for="description"><b>Description: </b></label>
-			<input type="text" required id="description" name="description">
-			<label for="category"><b>Category: </b></label>
-			<input type="text" required id="category" name="category">
+			<label for="name"><b>Name: </b></label><br>
+			<input type="text" required id="name" name="name" maxlength="256"><br><br>
+			<label for="image"><b>Upload Item Image: </b></label><br>
+			<input type="file" required id="image" name="image" accept="image/png, image/jpeg"><br><br>
+			<label for="description"><b>Description: </b></label><br>
+			<textarea id="description" required name="description" rows="4" cols="50" maxlength="256" value="{{
+            request.form.description }}"></textarea><br><br>
+			<label for="category"><b>Category: </b></label><br>
+			<input type="text" required id="category" name="category" maxlength="256"><br><br>
 			{% endif %}
-			<label for="price"><b>Price: </b></label>
-			<input type="number" required id="price" name="price" step=0.01 min=0>
-			<label for="count"><b>Count: </b></label>
-			<input type="number" required id="count" name="count" step=1 min=0>
+			<label for="price"><b>Price: </b></label><br>
+			<input type="number" required id="price" name="price" step=0.01 min=0><br><br>
+			<label for="count"><b>Count: </b></label><br>
+			<input type="number" required id="count" name="count" step=1 min=0><br><br>
 			<input type="submit" value="Proceed">
 		</form>
 	</div>

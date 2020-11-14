@@ -9,10 +9,29 @@ body {
   margin-bottom: 20px;
 }
 
+.main {
+  margin-left: 20px;
+  margin-bottom:65px;
+}
+
 .productImage {
   width: 80%;
   float: right;
   margin-top:20px;
+}
+
+.flashed {
+  background-color: #f89406;
+  border-color: #e96506;
+  color: #ffffff;
+}
+
+.flashed p {
+  margin-left: 20px;
+  margin-top:0px;
+  margin-bottom: 0px;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 
 img {
@@ -124,12 +143,16 @@ img {
 
 /* Footer */
 .footer {
-  position: fixed;
   width: 100%;
-  padding: 10px;
   text-align: center;
   background: #ddd;
-  bottom: 5px;
+  bottom:0;
+    position:fixed;
+    z-index:150;
+    _position:absolute;
+    _top:expression(eval(document.documentElement.scrollTop+
+        (document.documentElement.clientHeight-this.offsetHeight)));
+    height:60px;
 }
 
 .results{
