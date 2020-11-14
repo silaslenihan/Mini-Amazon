@@ -12,7 +12,6 @@ import datetime
 # TODO:
 # -modify item
 # -remove item
-# -selling history
 conn = psycopg2.connect(
 user="hshgoekz",
 password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
@@ -168,7 +167,7 @@ def sellingList():
     results = cur.fetchall()
     data = []
     for result in results:
-        item_id = result[6]
+        item_id = result[1]
         query1 = f"select name from Items where item_id = {item_id}"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
