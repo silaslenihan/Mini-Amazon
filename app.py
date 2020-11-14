@@ -10,7 +10,6 @@ import datetime
 
 
 # TODO:
-# -selling list 
 # -modify item
 # -remove item
 # -selling history
@@ -133,7 +132,32 @@ def purchase_history():
 @app.route('/sellingHistory', methods=['GET', 'POST'])
 @login_required
 def selling_history():
-    return render_template('sellingHistory.html',item='')
+    username = session['username']
+    query = f"SELECT * FROM OrderEntry WHERE seller_username = '{username}'"
+    cur.execute(query)
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        data_row = {}
+        item_id = result[1]
+        query1 = f"select name from Items where item_id = {item_id}"
+        cur.execute(query1)
+        item_name = cur.fetchall()[0][0]
+
+        data_row['item_image'] = ''
+        data_row['item_name'] = item_name
+        data_row['buyer'] = result[2]
+        payment_amount = result[3]
+        count = result[8]
+        price = payment_amount/count
+        data_row['price'] = price
+        data_row['count'] = count
+        data_row['purchase_timestamp'] = result[4]
+        data.append(data_row)
+    print(data)
+
+
+    return render_template('sellingHistory.html',data=data)
 
 @app.route('/sellingList', methods=['GET'])
 @login_required
@@ -144,7 +168,7 @@ def sellingList():
     results = cur.fetchall()
     data = []
     for result in results:
-        item_id = result[1]
+        item_id = result[6]
         query1 = f"select name from Items where item_id = {item_id}"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
