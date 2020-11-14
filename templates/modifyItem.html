@@ -4,9 +4,10 @@
 
 	{% extends 'layout.html' %}
 	{% block content %}
-	<div>
+	<div class="main">
 		<h3> Editing {{ session['username']}}'s item listing for {{item.name}} </h3>
-		<form action="{{url_for('addItem')}}" method="POST">
+		<form action="{{url_for('modifyItem')}}" method="POST">
+			<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
 			<label for="name"><b>Name: </b></label>
 			<input type="text" required id="name" name="name" value={{item.name}}>
 			<label for="image"><b>Upload a new Image (Optional): </b></label>
