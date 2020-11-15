@@ -319,12 +319,18 @@ def modifyItem():
     username = "'" +str(session['username'])+"'"
     itemID = int(request.args['item_id'])
     cur= conn.cursor()
-    findName="SELECT name FROM Items WHERE item_id = %d;" % itemID
+    findName="SELECT * FROM Items WHERE item_id = %d;" % itemID
     cur.execute(findName)
-    itemName=str(cur.fetchall()[0][0])
-    name = {"name": itemName}
-    # having trouble with FE interaction 
-    return render_template("modifyItem.html", name=name)
+    catName = str(cur.fetchall()[0][1])
+    itemName= str(cur.fetchall()[0][2])
+    description= str(cur.fetchall()[0][5])
+    getSellerInfo= "SELECT price, stock FROM SellsItem WHERE item_id=%d AND seller_username=%s;" % (itemID, username)
+    cur.execute(getSellerInfo)
+    price=round((cur.fetchall()[0][1]),2)
+    stock= int(cur.fetchall()[0][2])
+
+    # give all parameters of current lisiting for item (i.e. description, cat, etc)
+    return render_template("modifyItem.html", item=item)
 
 
 @app.route("/removeItem", methods=["GET", "POST"])
@@ -338,12 +344,6 @@ def removeItem():
         cur.execute(remove)
         return redirect(url_for('sellingList'))
     return redirect(url_for('sellingList'))
-
-@app.route("/updateProfile", methods=["GET", "POST"])
-@login_required
-def updateProfile():
-    # Come back
-    return redirect(url_for('editProfile'))
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
@@ -584,7 +584,6 @@ def addreview():
     }
     return render_template("reviews.html", item=item)
 
-
 @app.route("/addbalance", methods=['GET', 'POST'])
 @login_required
 def addbalance():
@@ -606,12 +605,6 @@ def addbalance():
         session['balance']=str(balance)
         return render_template("addBalance.html", error=error)
     return render_template("addBalance.html", error=error)
-
-
-@app.route("/showaverage", methods=['GET', 'POST'])
-@login_required
-def showaverage():
-    return render_template("reviews.html", error=msg)
 
 
 @app.route("/forgot", methods = ['GET', 'POST'])
