@@ -310,6 +310,7 @@ def modifyItem():
         itemInfo =cur.fetchall()[0]
         catName=itemInfo[1]
         itemName=itemInfo[2]
+        description=itemInfo[5]
         getSellerInfo= "SELECT price, stock FROM SellsItem WHERE item_id=%d AND seller_username=%s;" % (itemID, username)
         cur.execute(getSellerInfo)
         sellerInfo=cur.fetchall()[0]
@@ -319,6 +320,7 @@ def modifyItem():
             "item_id": itemID,
             "name": itemName,
             "category": catName,
+            "description": description,
             "price": price,
             "count": stock
         }
