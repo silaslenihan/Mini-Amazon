@@ -24,7 +24,6 @@ def generateReviewTable(total_items, buyer_list, cur, conn):
 
 	print("Generating Reviews....")
 	review_list = ["good","bad","terrible","meh","absolutely lovely!","confused","pretty nice","awesome","cool","super!","wow","astonishing","crazy","great","phenomenal","wasteful","best money ive spent","couldve been better","nothing wrong","could be worse","so so","would buy again","wouldnt buy again"]
-	buyer_list = ["user1","user2","user3"]
 	for count in range(1,total_items):
 		num_reviews = int((random() * 3) + 1)
 		for curr_rev in range(num_reviews):
@@ -34,7 +33,7 @@ def generateReviewTable(total_items, buyer_list, cur, conn):
 
 			rev_username.append(random_buyer)
 			rev_item.append(count)
-			rev_date_time.append('2020-01-0' + str(curr_rev))
+			rev_date_time.append('2020-01-1' + str(curr_rev))
 			rev_content.append(rand_review)
 			rev_rating.append(rand_rating)
 
@@ -70,18 +69,19 @@ def generateItemTable(itemDataFrame, cur, conn):
 			descrip.append("this is an item")
 		else:
 			descrip.append(itemDataFrame['description'][count])
-
+	'''
 	print("Inserting Items....")
 	for index in range(len(item_ids)):
 		curr_item = item_ids[index]
 		curr_cat = "'" + removeApostrophe(cat_name[index]) + "'"
-		curr_name = "'" + removeApostrophe(item_name[index]) + "'"
+		curr_name = "'" + removeApostrophe(str(item_name[index])[:1023]) + "'"
 		curr_avg = avg_rate[index]
 		curr_total = total_rates[index]
-		curr_descrip = "'" + removeApostrophe(descrip[index]) + "'"
+		curr_descrip = "'" + removeApostrophe(str(descrip[index])[:1023]) + "'"
 		insertItem = "INSERT INTO Items VALUES (%d, %s, %s, %.2f, %d, %s);" % (curr_item, curr_cat, curr_name, curr_avg, curr_total, curr_descrip)
 		cur.execute(insertItem)
 	conn.commit()
+	'''
 
 
 	item_table = {}
@@ -102,9 +102,9 @@ def generateUsers(userDataFrame, cur, conn):
 		email = "'" + userDataFrame['email'][index] + "'"
 		address = "'" + userDataFrame['address'][index] + "'"
 		balance = userDataFrame['balance'][index]
-		isPrime = userDataFrame['isPrime'][index]
+		isPrime = str(userDataFrame['isPrime'][index]).upper()
 		secret = "'" + userDataFrame['secret'][index] + "'"
-		insertUser = "INSERT INTO Users VALUES (%s, %s, %s, %s, %s, %.2f, %b, %s);" % (username, password, name, email, address, balance, isPrime, secret)
+		insertUser = "INSERT INTO Users VALUES (%s, %s, %s, %s, %s, %.2f, True, %s);" % (username, password, name, email, address, balance, secret)
 		cur.execute(insertUser)
 	conn.commit()
 
@@ -140,15 +140,17 @@ def generateBuyersAndSellers(userDataFrame, cur, conn):
 			buyers.append(user)
 		count = count+1
 	print("Adding Buyers...")
+	'''
 	for user in buyers:
-		insertBuyer = "INSERT INTO Buyers VALUES (%s);" % (user)
+		insertBuyer = "INSERT INTO Buyers VALUES (%s);" % ("'"+user+"'")
 		cur.execute(insertBuyer)
 	conn.commit()
 	print("Adding Sellers...")
 	for user in sellers:
-		insertSeller = "INSERT INTO Sellers VALUES (%s);" % (user)
+		insertSeller = "INSERT INTO Sellers VALUES (%s);" % ("'"+user+"'")
 		cur.execute(insertSeller)
 	conn.commit()
+	'''
 	split_users = {}
 	split_users["buyers"] = buyers
 	split_users["sellers"] = sellers
@@ -165,11 +167,13 @@ def generateSellsItems(item_table,seller_list, cur, conn):
 	stock = []
 	print("Generating SellsItem....")
 	for index in range(len(item_ids)):
-		seller_username.append(seller_list[int(random()*len(seller_list))])
-		item_id.append(item_ids[index])
-		cat_name.append(cat_names[index])
-		price.append(round(random()*100+5,2))
-		stock.append(int(random() * 25 + 5))
+		seller_index = int(random()*len(seller_list))
+		for index2 in range(int(random()*3+1)):
+			seller_username.append(seller_list[(seller_index+index2)%len(seller_list)])
+			item_id.append(item_ids[index])
+			cat_name.append(cat_names[index])
+			price.append(round(random()*100+5,2))
+			stock.append(int(random() * 25 + 5))
 
 	print("Inserting SellsItem....")
 	for index in range(len(seller_username)):
@@ -178,24 +182,29 @@ def generateSellsItems(item_table,seller_list, cur, conn):
 		curr_cat = "'" + removeApostrophe(cat_name[index]) + "'"
 		curr_price = price[index]
 		curr_stock = stock[index]
-		insertSellsItem = "INSERT INTO SellsItem VALUES (%s, %d, %s, %.2f, %d;" % (curr_seller, curr_item, curr_cat, curr_price, curr_stock)
+		insertSellsItem = "INSERT INTO SellsItem VALUES (%s, %d, %s, %.2f, %d);" % (curr_seller, curr_item, curr_cat, curr_price, curr_stock)
 		cur.execute(insertSellsItem)
 	conn.commit()
 
 
 conn = psycopg2.connect(
-user="hshgoekz",
-password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
-host="hattie.db.elephantsql.com",
+user="ojesxgzc",
+password="jiJNn1_JFKJWlevwxBsWD-F0CRy5Flzt",
+host="drona.db.elephantsql.com",
 port="5432"
 )
 cur = conn.cursor()
 
-generateCategories(itemDataFrame['amazon_category_and_sub_category'],cur, conn)
+#generateCategories(itemDataFrame['amazon_category_and_sub_category'],cur, conn)
 item_table = generateItemTable(itemDataFrame,cur,conn)
-generateUsers(userDataFrame,cur,conn)
+#generateUsers(userDataFrame,cur,conn)
 split_users = generateBuyersAndSellers(userDataFrame,cur,conn)
 buyer_list = split_users["buyers"]
 seller_list = split_users["sellers"]
-generateReviewTable(len(itemDataFrame),buyer_list,cur,conn)
-generateSellsItems(item_table, seller_list,cur,conn)
+#generateReviewTable(len(itemDataFrame),buyer_list,cur,conn)
+#generateSellsItems(item_table, seller_list,cur,conn)
+
+for seller in seller_list:
+	insertBuyer = "INSERT INTO Buyers VALUES (%s);" % ("'" + seller + "'")
+	cur.execute(insertBuyer)
+conn.commit()

@@ -10,9 +10,9 @@ import datetime
 from dateutil.relativedelta import relativedelta
 
 conn = psycopg2.connect(
-user="hshgoekz",
-password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
-host="hattie.db.elephantsql.com",
+user="ojesxgzc",
+password="jiJNn1_JFKJWlevwxBsWD-F0CRy5Flzt",
+host="drona.db.elephantsql.com",
 port="5432"
 )
 cur = conn.cursor()
@@ -85,7 +85,7 @@ def search_results():
     search="'%"+str(search)+"%'"
     cur = conn.cursor()
     #Prevent SQL injection
-    query="SELECT DISTINCT * FROM items WHERE LOWER (cat_name) LIKE %s OR LOWER (name) LIKE %s;" % (search, search)
+    query="SELECT * FROM items WHERE LOWER (cat_name) LIKE %s OR LOWER (name) LIKE %s;" % (search, search)
     cur.execute(query)
     version = cur.fetchall()
     data=[]
@@ -516,6 +516,8 @@ def purchase():
         return redirect(url_for('cart'))
     #Update the user balance
     updateBalance = "UPDATE Users Set balance = balance - %.2f WHERE username = %s;" % (totalCost, username)
+    print(userBalance)
+    print(totalCost)
     session['balance'] = "{:.2f}".format(userBalance - totalCost)
     # Add money to respective seller
     cur= conn.cursor()
@@ -542,7 +544,9 @@ def purchase():
         # find max order_id in OrderEntry
         findMax = "SELECT MAX(order_id) FROM OrderEntry;"
         cur.execute(findMax)
-        order_id = int(cur.fetchall()[0][0]) + 1
+        max=cur.fetchall()
+        maxID=(max[0][0])
+        order_id = maxID+1
         # Insert to OrderITems
         insertOrder = "INSERT INTO OrderEntry " \
                       "VALUES (%d, %d, %s, %.2f, %s, " \
