@@ -273,47 +273,41 @@ def addItem():
         cur.execute(checkItemExists)
         exists=cur.fetchall()
         if len(exists) != 0:
-            item_id = int(exists[0][0])
-            #check to make sure that User is not already selling this item,
-            # if so, they need to modify, not add a new listing
-            checkSeller = "SELECT * FROM SellsItem WHERE seller_username=%s AND item_id=%d;" % (username, item_id)
-            cur.execute(checkSeller)
-            alreadySells=cur.fetchall()
-            if len(alreadySells)>0:
-                flash("You already sell this item. Perhaps you'd like to modify your listing instead")
-                return redirect(url_for('sellingList'))
-            # we already have an item with this name, it needs to get an existing item_id
-            # do not insert/update Items table. Simply add this to sellsItem for given seller
-            getCategory="SELECT cat_name FROM Items WHERE item_id = %d;" % item_id
-            cur.execute(getCategory)
-            category = "'"+str(cur.fetchall()[0][0])+"'"
-            price = round(float(request.form['price']), 2)
-            count = int(request.form['count'])
-            insertItem = "INSERT INTO SellsItem VALUES (%s, %d, %s, %.2f, %d);" % (username, item_id, category, price, count)
-            cur.execute(insertItem)
-            flash("Item sucessfully listed!")
-            return redirect(url_for('sellingList'))
-        else:
-            # this is a new item, so now it can get a new item_id, and we will consider the user's description and category
-            image = "'"+str(request.form['image'])+"'"
-            description = "'"+str(request.form['description'])+"'"
-            category = "'"+str(request.form['category'])+"'"
-            price = round(float(request.form['price']), 2)
-            count = int(request.form['count'])
-            #create a brand new item_id
-            findMaxID = "SELECT MAX(item_id) FROM Items;"
-            cur.execute(findMaxID)
-            maxID = int(cur.fetchall()[0][0])
-            newItemID = maxID+1
+            flash('Item name already exists, cannot add item for existing item name.')
+            return redirect(url_for('root'))
+
+        item_id = request.form['itemid']
+        username = session['username']
+        price = str(request.form['price'])
+        count = str(request.form['count'])
+        if item_id == "-1":
+            # new item
+            query = "SELECT * FROM ITEMS ORDER BY item_id desc LIMIT 1"
+            cur.execute(query)
+            result = cur.fetchall()[0]
+            item_id = result[0] + 1
+
+            item_name = str(request.form['name'])
+            image = str(request.form['image'])
+            description = str(request.form['description'])
+            category = str(request.form['category'])
+            price = str(request.form['price'])
+            count = str(request.form['count'])
             # TODO: change 1 to 0 once DB guys fix the setup
-            # insert into Items
-            addNewItem = "INSERT INTO Items VALUES (%d, %s, %s, 1, 0, %s);" % (newItemID, category, item_name, description)
-            cur.execute(addNewItem)
-            #insert into SellsItem
-            insertSellItem = "INSERT INTO SellsItem VALUES (%s, %d, %s, %.2f, %d);" % (username, newItemID, category, price, count)
-            cur.execute(insertSellItem)
-            flash("Item sucessfully listed!")
-            return redirect(url_for('sellingList'))
+            query2 = f"INSERT INTO Items VALUES('{item_id}','{category}','{item_name}',1,0,'{description}');"
+            cur.execute(query2)
+            query1 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query1)
+        else:
+
+
+            query3 = f"SELECT cat_name from items where item_id = {item_id}"
+            cur.execute(query3)
+            category = cur.fetchall()[0][0]
+
+            query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query4)
+        flash("Item sucessfully listed.")
         conn.commit()
     itemid = request.args.get('itemid', -1)
     itemname = request.args.get('itemname', '')
