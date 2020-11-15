@@ -5,11 +5,9 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 	<div class="main">
-		<h3> Editing {{ session['username']}}'s item listing for {{item.name}} </h3>
-		<form action="{{url_for('sellingList')}}" method="POST">
+		<h3> Editing {{ session['username']}}'s item listing for {{name.name}} </h3>
+		<form action="{{url_for('modifyItem')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
-			<label for="name"><b>Name: </b></label><br>
-			<input type="text" required id="name" name="name" value={{item.name}} maxlength="256"><br><br>
 			<label for="image"><b>Upload a new Image (Optional): </b></label><br>
 			<input type="file" id="image" name="image" accept="image/png, image/jpeg"><br><br>
 			<label for="description"><b>Description: </b></label><br>

@@ -130,7 +130,6 @@ def purchase_history():
     for result in results:
         data_row = {}
         item_id = result[6]
-        print(result[0])
         itemName = "SELECT name FROM Items WHERE item_id = %d;" % item_id
         cur.execute(itemName)
         item_name = str(cur.fetchall()[0][0])
@@ -173,9 +172,6 @@ def selling_history():
         data_row['item_id'] = item_id
         data_row['totalSale'] = round((price*count), 2)
         data.append(data_row)
-    print(data)
-
-
     return render_template('sellingHistory.html',data=data)
 
 @app.route('/sellingList', methods=['GET'])
@@ -198,8 +194,6 @@ def sellingList():
         data_row['stock'] = result[4]
         data_row['item_id'] = item_id
         data.append(data_row)
-
-    print(data)
     return render_template('sellingList.html', data=data)
 
 
@@ -329,21 +323,14 @@ def addItem():
 @login_required
 def modifyItem():
     username = "'" +str(session['username'])+"'"
-    if request.method=='POST':
-        item=[]
-        data_row = {}
-        data_row['item_'] = row[0]
-        data_row['seller_username'] = row[1]
-        data_row['quantity'] = row[2]
-        data_row['price_per_item'] = row[3]
-        data_row['name'] = row[4]
-        data_row['cat_name'] = row[5]
-        data_row['avg_rate'] = row[6]
-        data_row['description'] = row[7]
-        item.append(data_row)
-        itemitem_id = request.form['itemid']
-
-    return render_template("modifyItem.html",item=item)
+    itemID = int(request.args['item_id'])
+    cur= conn.cursor()
+    findName="SELECT name FROM Items WHERE item_id = %d;" % itemID
+    cur.execute(findName)
+    itemName=str(cur.fetchall()[0][0])
+    name = {"name": itemName}
+    # having trouble with FE interaction 
+    return render_template("modifyItem.html", name=name)
 
 
 @app.route("/removeItem", methods=["GET", "POST"])
@@ -486,11 +473,8 @@ def removeFromCart():
     username = "'" + str(session['username']) + "'"
     if request.method == 'POST':
         itemID = request.form['item_id']
-        print(itemID)
         seller = "'"+str(request.form['seller'])+"'"
-        print(seller)
         quantity = (request.form['quantity'])
-        print(quantity)
         cur = conn.cursor()
         removeItems="DELETE FROM Cart WHERE username=%s AND item_id=%d AND seller_username=%s;" % (username, int(itemID), seller)
         cur.execute(removeItems)
@@ -522,7 +506,6 @@ def purchase():
     #Update the user balance
     updateBalance = "UPDATE Users Set balance = balance - %.2f WHERE username = %s;" % (totalCost, username)
     session['balance'] = "{:.2f}".format(userBalance - totalCost)
-    print(totalCost)
     # Add money to respective seller
     cur= conn.cursor()
     getCartItems = "SELECT * FROM Cart WHERE username = %s;" % username
@@ -530,7 +513,6 @@ def purchase():
     itemsList = cur.fetchall()
     entry_id = 1
     for row in itemsList:
-        print(row)
         newMoney = float(row[2]*row[3])
         seller = "'"+str(row[4])+"'"
         updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s;" % (newMoney, seller)
