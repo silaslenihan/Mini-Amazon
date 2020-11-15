@@ -140,7 +140,7 @@ def selling_history():
     data = []
     for result in results:
         data_row = {}
-        item_id = result[1]
+        item_id = result[6]
         query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
@@ -254,6 +254,7 @@ def addItem():
         # if 2 products have the same name, then their itemID is the same
         cur = conn.cursor()
         checkItemExists = "SELECT item_id FROM Items WHERE name = %s;" % item_name
+        print(checkItemExists)
         cur.execute(checkItemExists)
         exists=cur.fetchall()
         if len(exists) != 0:
@@ -280,17 +281,23 @@ def addItem():
             # Items table references Category, so need the category to exist before inserting item
             catDescription = "'This is a category of item that fit based on category name'"
             addCat="INSERT INTO Category VALUES (%s, %s);" % ("'"+category+"'", catDescription)
-            cur.execute(addCat)
+            try:
+                print(addCat)
+                cur.execute(addCat)
+            except:
+                print("Category already exists")
             # TODO: change 1 to 0 once DB guys fix the setup
-            query2 = f"INSERT INTO Items VALUES('{item_id}','{category}','{item_name}',1,0,'{description}');"
+            query2 = f"INSERT INTO Items VALUES({item_id},'{category}','{item_name}',1,0,'{description}');"
+            cur=conn.cursor()
+            print(query2)
             cur.execute(query2)
-            query1 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            query1 = f"INSERT INTO SellsItem VALUES('{str(username)}',{item_id},'{category}',{price},{count});"
             cur.execute(query1)
         else:
             query3 = f"SELECT cat_name from items where item_id = {item_id}"
             cur.execute(query3)
             category = cur.fetchall()[0][0]
-            query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            query4 = f"INSERT INTO SellsItem VALUES('{str(username)}',{item_id},'{category}',{price},{count});"
             cur.execute(query4)
         flash("Item sucessfully listed.")
         conn.commit()
