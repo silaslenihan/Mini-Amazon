@@ -1,0 +1,50 @@
+username,password,name,email,address,balance,isPrime,secret
+johndoe,abcd1234,John,john@gmail.com,chapel hill blvd,1000,TRUE,abc
+janedoe,abcd1234,Jane,jane@gmail.com,duke st,2000,TRUE,def
+bob123,abcd1234,Bob,bob@gmail.com,duke st,3000,FALSE,ghi
+cpap6,abcd1234,Charles,char@gmail.com,duke st,4000,TRUE,jkl
+evan7,abcd1234,Evan,evan@gmail.com,lucky lane,2500,TRUE,mno
+zoe888,abcd1234,Zoe,zoe@gmail.com,avenue,15499,TRUE,pqr
+amy,abcd1234,Amy,amy@gmail.com,road road,5128,TRUE,stu
+csiscool,abcd1234,CompSciProfessor,cs@gmail.com,def street,12452,FALSE,vwx
+jojo4,abcd1234,Joseph,jo@gmail.com,abc street,123,TRUE,yza
+racecardriver3,abcd1234,RaceCarMan,rc@gmail.com,123 street,3254,TRUE,bcd
+mouse2,abcd1234,Mickey,mm2@gmail.com,123 street,553,TRUE,efg
+mouse1,abcd1234,Minnie,mm1@gmail.com,124 street,321,FALSE,hij
+lbj23,abcd1234,LeBron,lbj23@gmail.com,124 street,1257,TRUE,klm
+vince43,abcd1234,Vince,vc43@gmail.com,1 Kilgo ,2543,TRUE,nop
+jack42,abcd1234,Jack,j42@gmail.com,9th st,765,TRUE,qrs
+pat28,abcd1234,Pat,p28@gmail.com,9th st,8769,FALSE,tuv
+pete21,abcd1234,Pete,p21@gmail.com,9th st,7645,TRUE,wxy
+brian2890,abcd1234,Brian,b2890@gmail.com,main st,54,TRUE,zab
+sam11,abcd1234,Sam,s11@gmail.com,main st,4675,TRUE,cde
+ajackson2,abcd1234,Alex,ajack@gmail.com,main st,324,TRUE,fgh
+sphillips11,abcd1234,Sam,sphil@gmail.com,chapel dr,324,TRUE,ijk
+samuel2,abcd1234,Samuel,sam2@gmail.com,chapel dr,123,FALSE,lmn
+jonny2929,abcd1234,Jonny,k2929@gmail.com,chapel dr,35,FALSE,opq
+fsq2999,abcd1234,Francis,fsq@gmail.com,duke st,879,TRUE,rst
+lso221,abcd1234,Luke,lso@gmail.com,road road,234,FALSE,uvw
+ppq223,abcd1234,Patrick,ppq@gmail.com,2 road road,532,TRUE,xyz
+aty34,abcd1234,Anthony,aty34@gmail.com,duke st,4000,TRUE,pot
+srt998,abcd1234,Sam,srt@gmail.com,3 road road,678,FALSE,mot
+jk2222,abcd1234,Jack,jk2222@gmail.com,avenue,345,TRUE,jkh
+ianp1149,abcd1234,Ian,ianp@gmail.com,17 avenue,8974,FALSE,lol
+sqkf223,abcd1234,Sam,sqf223@gmail.com,8 9th st,32,TRUE,ujf
+fsjka992,abcd1234,Frank,fsk@gmail.com,7 9th st,234,FALSE,uhf
+sksj888,abcd1234,Sean,sksj@yahoo.com,43rd door,546,TRUE,wes
+ghr22234,abcd1234,Garrett,ghr@gmail.com,22nd door,231,TRUE,erd
+llpak89,abcd1234,Lucas,llpak@gmail.com,12th door,2315,TRUE,hnd
+ssd888,abcd1234,Sloan,ssd@gmail.com,9 43rd st,678,TRUE,gha
+fffs7777,abcd1234,Fran,fffs@gmail.com,1 main st,234,TRUE,tgq
+aaaaaa999,abcd1234,Andrew,aaaaa@gmail.com,hillsborough rd,4534,TRUE,gdr
+johnsmith123,abcd1234,John Smith,j123@gmail.com,hillsborough rd,675,TRUE,ola
+janesmith456,abcd1234,Jane Smith,js456@gmail.com,road road,6436,FALSE,ujq
+myusername,abcd1234,Anonymous,userguy@gmail.com,street,567,FALSE,tga
+mj23,abcd1234,Michael,goat@gmail.com,duke st,5000,TRUE,ghe
+zuck233,abcd1234,Mark,zuck@gmail.com,boulevard,3000,TRUE,ndn
+lklk99,abcd1234,Luke,lklk@gmail.com,street lane,12,FALSE,jnh
+fju22123,abcd1234,Frank,fju@gmail.com,broken dreams blvd,234,TRUE,uop
+booo2929,abcd1234,Bob,boo@gmail.com,broken dreams blvd,145,FALSE,okl
+slr221,abcd1234,Simon,slr@gmail.com,broken dreams blvd,657,TRUE,yhg
+pwll22,abcd1234,pete,pwll@gmail.com,broken dreams blvd,23,TRUE,ytg
+sdsa22,abcd1234,Sam,sdsa@gmail.com,broken dreams blvd,125,FALSE,jhg
