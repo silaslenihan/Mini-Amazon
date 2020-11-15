@@ -13,8 +13,11 @@
 			{% if not session['seller'] %} No {% endif %}
 		</h5>
 		<h5><a href="{{url_for('cart')}}">Your Cart</a></h5>
-		<h5><a href="">Your Purchase History</a></h5>
-		<h5><a href="">Your Selling History</a></h5>
+		<h5><a href="{{url_for('purchase_history')}}">Your Purchase History</a></h5>
+		{% if session['seller'] %}
+		<h5><a href="{{url_for('selling_history')}}">Your Selling History</a></h5>
+		<h5><a href="{{url_for('sellingList')}}">Your Current Listings</a></h5>
+		{% endif %}
 		<h5><a href="{{url_for('logout')}}">Logout</a></h5>
 	</div>
 	{% endblock %}

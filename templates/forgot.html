@@ -14,14 +14,14 @@
   <p>Like Amazon, but without the bugs</p>
 </div>
 
-<div class="container">
+<div class="main">
       <h3>Please enter your username:</h3>
         <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
+        <input type="text" required placeholder="Username" name="username" value="{{
           request.form.username }}">
             <br>
             <h3>What is the name of your childhood best friend?</h3>
-        <input type="text" placeholder="Answer" name="answer" value="{{
+        <input type="text" required placeholder="Answer" name="answer" value="{{
           request.form.answer }}">
         <input class="btn btn-default" type="submit" value="Get Password">
       </form>
@@ -32,7 +32,7 @@
         <p class="correct"><strong>Your answer is correct, here is your password:</strong> {{ correct }}
       {% endif %}
 </div>
-<div class="container">
+<div class="main">
       <h3>Back to login page:</h3>
         <form action="{{url_for('login')}}" method="get">
         <input class="btn btn-default" type="submit" value="Login page">

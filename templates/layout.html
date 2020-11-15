@@ -27,8 +27,9 @@
     <a href="{{url_for('addbalance')}}">Add Balance</a>
     <a href="{{url_for('purchase_history')}}">Purchase History</a>
     {% if session['seller'] %}
-      <a href="#">Add/Modify Item</a>
       <a href="{{url_for('selling_history')}}">Selling History</a>
+      <a href="{{url_for('sellingList')}}">Current Listings</a>
+      <a href="{{url_for('addItem')}}">Add a Listing</a>
     {% endif %}
     <a href="{{url_for('logout')}}"> Logout </a>
   </div>
@@ -36,10 +37,15 @@
   <a href="{{url_for('cart')}}" class="right">View Cart</a>
 
 </div>
-
+{% if get_flashed_messages()|length > 0 %}
+<div class="flashed">
+  <p>
 {% for message in get_flashed_messages() %}
     {{ message }}
     {% endfor %}
+  </p>
+</div>
+{% endif %}
 
 {% block content %}
 {% endblock %}

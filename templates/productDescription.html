@@ -3,6 +3,7 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
+  <div class="main">
 	<div class="row">
   		<div class="column" style="margin-right:20px">
   			<img src="../static/images/default-img.gif" alt="Default product image" class="productImage">
@@ -10,7 +11,10 @@
   		<div class="column" style="margin-left:5px">
   			<h2>{{data.item_name}}</h2>
   			<h4>{{data.description}}</h4>
-  			<p>{{data.rating}} Stars</p>
+  			<p> {% if data.rating == 0 %} No reviews yet
+            {% else %} {{data.rating}} Stars
+            {% endif %}
+          </p>
   			<table class="results">
   				<tr>
   					<th>Seller</th>
@@ -32,10 +36,14 @@
   				</tr>
   				{% endfor %}
   			</table>
+        {% if session['seller'] and  not sellsItem %}
+          <p><a href="{{url_for('addItem', itemid = data.item_id, itemname = data.item_name)}}">Add a listing for this item </a></p>
+        {% endif %}
   		</div>
 	</div>
-	<h3 class="bodytext">Reviews</h3>
-  <a href="{{url_for('addreview', itemid = data.item_id)}}">Add a Review</a>
+	<h3>Reviews</h3>
+  <p><a href="{{url_for('addreview', itemid = data.item_id)}}">Add a Review</a></p>
+  <div>
 	<table class="results">
 		{% for review in data.reviews_list %}
 		<tr>
@@ -46,6 +54,7 @@
 
 		{% endfor %}
 	</table>
-	<br><br>
+</div>
+</div>
 	{% endblock %}
 </html>

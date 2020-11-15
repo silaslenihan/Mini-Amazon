@@ -7,13 +7,15 @@ import json
 import os
 import psycopg2
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
-
+# TODO:
+# -modify item
 conn = psycopg2.connect(
-user="rwrcuqxo",
-password="fjAbl6HJjop7bDM9L3zfMZ9c_yT9wdM8",
-host="lallah.db.elephantsql.com",
+user="hshgoekz",
+password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
+host="hattie.db.elephantsql.com",
 port="5432"
 )
 cur = conn.cursor()
@@ -26,8 +28,7 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-global usernameID
-global nameID
+
 
 
 # all of the following method are required to be implemented
@@ -106,6 +107,13 @@ def search_results():
     for row in version:
         data_row = {}
         data_row['item_id'] = row[0]
+        findMax = "SELECT MAX(price) FROM SellsItem WHERE item_id = %d;" % row[0]
+        cur.execute(findMax)
+        maxPrice = round(cur.fetchall()[0][0], 2)
+        findMin = "SELECT MIN(price) FROM SellsItem WHERE item_id = %d;" % row[0]
+        cur.execute(findMin)
+        minPrice = round(cur.fetchall()[0][0], 2)
+        data_row['range'] = str(minPrice)+" - $"+str(maxPrice)
         data_row['name'] = row[2]
         data_row['category'] = row[1]
         data_row['rating'] = row[3]
@@ -115,23 +123,95 @@ def search_results():
 @app.route('/purchaseHistory', methods=['GET', 'POST'])
 @login_required
 def purchase_history():
-    return render_template('purchaseHistory.html',item='')
+    query = f"SELECT * FROM OrderEntry WHERE buyer_username = '{session['username']}';"
+    cur.execute(query)
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        data_row = {}
+        item_id = result[6]
+        itemName = "SELECT name FROM Items WHERE item_id = %d;" % item_id
+        cur.execute(itemName)
+        item_name = str(cur.fetchall()[0][0])
+        data_row['order_id'] = result[0]
+        data_row['entry_id'] = result[1]
+        data_row['item_id'] = item_id
+        data_row['item_name'] = item_name
+        data_row['seller_username'] = result[9]
+        data_row['price_per_item'] = round((result[3]/result[8]), 2)
+        data_row['count'] = result[8]
+        data_row['purchase_timestamp'] = result[4]
+        data_row['delivery'] = result[5]
+        data.append(data_row)
+    return render_template('purchaseHistory.html', items=data)
 
 @app.route('/sellingHistory', methods=['GET', 'POST'])
 @login_required
 def selling_history():
-    return render_template('sellingHistory.html',item='')
+    username = session['username']
+    query = f"SELECT * FROM OrderEntry WHERE seller_username = '{username}';"
+    cur.execute(query)
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        data_row = {}
+        item_id = result[1]
+        query1 = f"select name from Items where item_id = {item_id};"
+        cur.execute(query1)
+        item_name = cur.fetchall()[0][0]
 
+        data_row['item_image'] = ''
+        data_row['item_name'] = item_name
+        data_row['buyer_username'] = result[2]
+        payment_amount = result[3]
+        count = result[8]
+        price = round((payment_amount/count), 2)
+        data_row['price_per_item'] = price
+        data_row['quantity'] = result[8]
+        data_row['timestamp'] = result[4]
+        data_row['item_id'] = item_id
+        data_row['totalSale'] = round((price*count), 2)
+        data.append(data_row)
+    return render_template('sellingHistory.html',data=data)
+
+@app.route('/sellingList', methods=['GET'])
+@login_required
+def sellingList():
+    username = session['username']
+    query = f"select * from SellsItem where seller_username = '{username}';"
+    cur.execute(query)
+    results = cur.fetchall()
+    data = []
+    for result in results:
+        item_id = result[1  ]
+        query1 = f"select name from Items where item_id = {item_id};"
+        cur.execute(query1)
+        item_name = cur.fetchall()[0][0]
+        data_row = {}
+        data_row['item_image'] = ''
+        data_row['item_name'] = item_name
+        data_row['price'] = result[3]
+        data_row['stock'] = result[4]
+        data_row['item_id'] = item_id
+        data.append(data_row)
+    return render_template('sellingList.html', data=data)
 
 
 @app.route("/productDescription", methods=['GET', 'POST'])
 @login_required
 def productDescription():
-    # Make sure this still aligns with updated rating method
-    placetaker = ''
     item_id = int(request.args['itemid'])
-    print(item_id)
     cur = conn.cursor()
+    checkExists = "SELECT item_id FROM Items;"
+    cur.execute(checkExists)
+    allItems = cur.fetchall()
+    exists=False
+    for i in range(len(allItems)):
+        if allItems[i][0] == item_id:
+            exists=True
+    if exists == False:
+        flash("Item does not exist!")
+        return redirect(url_for('root'))
     # get matching item from db
     query1 = "SELECT * FROM Items WHERE item_id = %d;" % int(item_id)
     cur.execute(query1)
@@ -141,19 +221,22 @@ def productDescription():
     description = results1[5]
     rating = results1[3]
     # get matching sellers from db
-    query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id}"
+    query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id};"
     cur.execute(query2)
     results2 = cur.fetchall()
     # get list of sellers who sell that item
+    currUserSellsItem = False
     seller_list = []
     for result in results2:
         seller = {}
+        if (result[0]==session['username']):
+            currUserSellsItem = True
         seller['username'] = result[0]
         seller['price'] = result[3]
         seller['stock'] = result[4]
         seller_list.append(seller)
     # get matching reviews from db
-    query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id}"
+    query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id};"
     cur.execute(query3)
     results3 = cur.fetchall()
     # get list of reviews about that item
@@ -175,40 +258,86 @@ def productDescription():
         "sellers_list": seller_list,
         "reviews_list": reviews_list
     }
-    print(data)
+    return render_template("productDescription.html", data =data, sellsItem = currUserSellsItem)
 
-    return render_template("productDescription.html", data =data)
-
-@app.route("/add")
-@login_required
-def add():
-    # Probably not necessary
-
-    placetaker = ''
-    return render_template('add.html', placetaker =placetaker)
 
 @app.route("/addItem", methods=["GET", "POST"])
 @login_required
 def addItem():
-    # Seller adds a new product to sell, this will involve INSERT into the items table,
-    # Check whether the product is already sold
+    username = "'"+str(session['username'])+"'"
+    if request.method == 'POST':
+        item_name = "'"+str(request.form['name'])+"'"
+        # if 2 products have the same name, then their itemID is the same
+        cur = conn.cursor()
+        checkItemExists = "SELECT item_id FROM Items WHERE name = %s;" % item_name
+        cur.execute(checkItemExists)
+        exists=cur.fetchall()
+        if len(exists) != 0:
+            flash('Item name already exists, cannot add item for existing item name.')
+            return redirect(url_for('root'))
 
-    return redirect(url_for('root'))
+        item_id = request.form['itemid']
+        username = session['username']
+        price = str(request.form['price'])
+        count = str(request.form['count'])
+        if item_id == "-1":
+            # new item
+            query = "SELECT * FROM ITEMS ORDER BY item_id desc LIMIT 1"
+            cur.execute(query)
+            result = cur.fetchall()[0]
+            item_id = result[0] + 1
 
-@app.route("/remove")
+            item_name = str(request.form['name'])
+            image = str(request.form['image'])
+            description = str(request.form['description'])
+            category = str(request.form['category'])
+            price = str(request.form['price'])
+            count = str(request.form['count'])
+            # TODO: change 1 to 0 once DB guys fix the setup
+            query2 = f"INSERT INTO Items VALUES('{item_id}','{category}','{item_name}',1,0,'{description}');"
+            cur.execute(query2)
+            query1 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query1)
+        else:
+
+
+            query3 = f"SELECT cat_name from items where item_id = {item_id}"
+            cur.execute(query3)
+            category = cur.fetchall()[0][0]
+
+            query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
+            cur.execute(query4)
+        flash("Item sucessfully listed.")
+        conn.commit()
+    itemid = request.args.get('itemid', -1)
+    itemname = request.args.get('itemname', '')
+    return render_template("addItem.html",itemid=itemid,itemname=itemname)
+
+@app.route("/modifyItem", methods=["GET", "POST"])
 @login_required
-def remove():
-    # Maybe not necessary
-    data = ''
-    return render_template('remove.html', data=data)
+def modifyItem():
+    username = "'" +str(session['username'])+"'"
+    itemID = int(request.args['item_id'])
+    cur= conn.cursor()
+    findName="SELECT name FROM Items WHERE item_id = %d;" % itemID
+    cur.execute(findName)
+    itemName=str(cur.fetchall()[0][0])
+    name = {"name": itemName}
+    # having trouble with FE interaction 
+    return render_template("modifyItem.html", name=name)
 
-@app.route("/removeItem")
+
+@app.route("/removeItem", methods=["GET", "POST"])
 @login_required
 def removeItem():
-    # Seller removes item, no longer wants to sell it
-
-    print(msg)
-    return redirect(url_for('root'))
+    if request.method == 'POST':
+        item_id = int(request.form['itemid'])
+        seller = "'"+str(session['username'])+"'"
+        cur= conn.cursor()
+        remove = "DELETE From SellsItem WHERE item_id=%d AND seller_username=%s;" % (item_id, seller)
+        cur.execute(remove)
+        return redirect(url_for('sellingList'))
+    return redirect(url_for('sellingList'))
 
 @app.route("/updateProfile", methods=["GET", "POST"])
 @login_required
@@ -245,7 +374,6 @@ def login():
             else:
                 session['seller']=True
             flash('You have logged in! Hi '+str(version[0][2])+'!')
-            print(version[0])
             nameID = version[0][2]
             usernameID = version[0][0]
             return redirect(url_for('root'))
@@ -276,34 +404,24 @@ def addToCart():
         seller = request.form['seller']
         seller = "'"+str(seller)+"'"
         cur = conn.cursor()
-        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d and seller_username=%s" % (username, itemID, seller)
+        checkAlreadyinCart = "SELECT quantity FROM Cart WHERE username = %s and item_id = %d and seller_username=%s;" % (username, itemID, seller)
         cur.execute(checkAlreadyinCart)
         quant = cur.fetchall()
         if len(quant) != 0:
             alreadyAdded=True
             quantity += int(quant[0][0])
-        cur = conn.cursor()
-        checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
-        cur.execute(checkEnoughBalance)
-        userBalance = float(cur.fetchall()[0][0])
-        if float(price)*float(quantity) > float(userBalance):
-            flash('You do not have enough money in balance to add this to cart!')
+        if alreadyAdded:
+            cur = conn.cursor()
+            updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s;" % (quantity, username, itemID, seller)
+            cur.execute(updateCart)
+            flash("Item(s) added to cart!")
             return redirect(url_for('cart'))
         else:
-            if alreadyAdded:
-                cur = conn.cursor()
-                updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s" % (quantity, username, itemID, seller)
-                cur.execute(updateCart)
-                conn.commit()
-                flash("Item(s) added to cart!")
-                return redirect(url_for('cart'))
-            else:
-                cur = conn.cursor()
-                addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %d, %s);" % (itemID, username, int(quantity), price, seller)
-                cur.execute(addCart)
-                conn.commit()
-                flash("Item(s) added to cart!")
-                return redirect(url_for('cart'))
+            cur = conn.cursor()
+            addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
+            cur.execute(addCart)
+            flash("Item(s) added to cart!")
+            return redirect(url_for('cart'))
     return redirect(url_for('cart'))
 
 @app.route("/cart", methods=['GET', 'POST'])
@@ -324,8 +442,12 @@ def cart():
     cur = conn.cursor()
     cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
     cur.execute(cost)
-    totalCost = float(cur.fetchall()[0][0])
-    totalCost = "{:.2f}".format(totalCost)
+    try:
+        totalCost = float(cur.fetchall()[0][0])
+        totalCost = "{:.2f}".format(totalCost)
+    except:
+        totalCost=0
+        totalCost = "{:.2f}".format(totalCost)
     for row in cartItems:
         data_row = {}
         data_row['item_id'] = row[0]
@@ -339,26 +461,85 @@ def cart():
         items.append(data_row)
     return render_template('cart.html', items=items, cost=totalCost)
 
-@app.route("/removeFromCart")
+@app.route("/removeFromCart", methods=['GET', 'POST'])
 @login_required
 def removeFromCart():
-
-    # REMOVE item_id from user's cart based on their username
-    # How do we get username?
-
-    return redirect(url_for('root'))
-
+    username = "'" + str(session['username']) + "'"
+    if request.method == 'POST':
+        itemID = request.form['item_id']
+        seller = "'"+str(request.form['seller'])+"'"
+        quantity = (request.form['quantity'])
+        cur = conn.cursor()
+        removeItems="DELETE FROM Cart WHERE username=%s AND item_id=%d AND seller_username=%s;" % (username, int(itemID), seller)
+        cur.execute(removeItems)
+        addBacktoStock="UPDATE SellsItem SET stock=stock+%d WHERE seller_username=%s AND item_id=%d;" % (int(quantity), seller, int(itemID))
+        cur.execute(addBacktoStock)
+        flash("Item(s) removed from cart!")
+        return redirect(url_for('cart'))
+    return redirect(url_for('cart'))
 
 @app.route("/purchase", methods=['GET', 'POST'])
 @login_required
 def purchase():
-    return render_template("reviews.html", error=msg)
+    username = "'" + str(session['username']) + "'"
+    cost = "SELECT total_price FROM CartSummary WHERE username = %s;" % username
+    cur=conn.cursor()
+    cur.execute(cost)
+    try:
+        totalCost = float(cur.fetchall()[0][0])
+    except:
+        totalCost = 0
+    #Check if user has enough balance
+    cur=conn.cursor()
+    checkEnoughBalance = "SELECT balance from Users where username = %s;" % username
+    cur.execute(checkEnoughBalance)
+    userBalance = float(cur.fetchall()[0][0])
+    if totalCost>userBalance:
+        flash("You do not have enough funds in balance to complete this order!")
+        return redirect(url_for('cart'))
+    #Update the user balance
+    updateBalance = "UPDATE Users Set balance = balance - %.2f WHERE username = %s;" % (totalCost, username)
+    session['balance'] = "{:.2f}".format(userBalance - totalCost)
+    # Add money to respective seller
+    cur= conn.cursor()
+    getCartItems = "SELECT * FROM Cart WHERE username = %s;" % username
+    cur.execute(getCartItems)
+    itemsList = cur.fetchall()
+    entry_id = 1
+    for row in itemsList:
+        newMoney = float(row[2]*row[3])
+        seller = "'"+str(row[4])+"'"
+        updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s;" % (newMoney, seller)
+        cur.execute(updateSellerBalance)
+        # Add each item to order items
+        # get category of item
+        item_id = int(row[0])
+        findCat = "SELECT cat_name FROM Items WHERE item_id = %d;" % item_id
+        cur.execute(findCat)
+        category = "'"+str(cur.fetchall()[0][0])+"'"
+        # get order and delivery date
+        dt_string = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        orderDate = "'" + str(dt_string) + "'"
+        delivery = datetime.datetime.now() + relativedelta(weeks=1)
+        delivery = "'" + str(delivery.strftime("%Y-%m-%d")) + "'"
+        # find max order_id in OrderEntry
+        findMax = "SELECT MAX(order_id) FROM OrderEntry;"
+        cur.execute(findMax)
+        order_id = int(cur.fetchall()[0][0]) + 1
+        # Insert to OrderITems
+        insertOrder = "INSERT INTO OrderEntry " \
+                      "VALUES (%d, %d, %s, %.2f, %s, " \
+                      "%s, %d, %s, %d, %s);" % (order_id, entry_id, username, newMoney, orderDate, delivery, item_id, category, row[2], seller)
+        cur.execute(insertOrder)
+        entry_id += 1
+    clearCart = "DELETE FROM Cart WHERE username = %s;" % username
+    cur.execute(clearCart)
+    return redirect(url_for('purchase_history'))
 
 def pass_valid(p1, p2):
     if p1 == p2:
         return True
     return False
-
 
 @app.route("/addreview", methods = ['GET', 'POST'])
 @login_required
@@ -529,11 +710,14 @@ def registrationForm():
             cur.execute(insert)
             if seller.lower() == 'y' or seller.lower()=='yes':
                 insert2= "INSERT INTO Sellers VALUES (%s);" % (username)
+                insert4= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert2)
+                cur.execute(insert4)
             if seller.lower() =='n' or seller.lower() == 'no':
                 insert3= "INSERT INTO Buyers VALUES (%s);" % (username)
                 cur.execute(insert3)
             flash('Registered successfully')
+            conn.commit()
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
 

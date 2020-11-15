@@ -3,7 +3,8 @@
 <body>
 	{% extends 'layout.html' %}
 	{% block content %}
-	<h3 class="bodytext">Showing {{item|length}} Result(s)</h3>
+	<div class="main">
+	<h3>Showing {{item|length}} Result(s)</h3>
 	<div>
 		<table class="results">
 			
@@ -20,11 +21,12 @@
 				</td>
 				<td>{{singleItem.category}}</td>
 				<td>{{singleItem.rating}}</td>
-				<td><i>TODO</i></td>
+				<td>${{singleItem.range}}</td>
 			</tr>
 			{% endfor %}
 		</table>
 	</div>
+</div>
 	{% endblock %}
 </body>
 </html>

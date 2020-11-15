@@ -5,7 +5,7 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 
-	<div>
+	<div class="main">
 		<h3> Current Listings for {{session['username']}}: </h3>
 		<table class="results">
 			<tr>
@@ -14,22 +14,21 @@
 				<th>Per-Unit Price</th>
 				<th>Stock</th>
 			</tr>
-			{% for item in items %}
+			{% for item in data %}
 			<tr>
 				<td><img src="../static/images/default-img.gif" alt="Default product image" style="max-width: 300;max-height: 300"></td>
-				<td><p><a href="{{url_for('productDescription', itemid=item.item_id)}}">{{item.name}}</a></p></td>
-				<td><p>{{item.buyer_username}}</p></td>
-				<td><p>${{item.price_per_item}}</p></td>
-				<td><p>{{item.quantity}}</p></td>
+				<td><p><a href="{{url_for('productDescription', itemid=item.item_id)}}">{{item.item_name}}</a></p></td>
+				<td><p>${{item.price}}</p></td>
+				<td><p>{{item.stock}}</p></td>
 				<td> 
-					<form action="{{url_for('editItem')}}" method="POST">
-						<input type="hidden" id="itemid" name="itemid" value=item.item_id>
+					<form action="{{url_for('modifyItem')}}" method="GET">
+						<input type="hidden" id="item_id" name="item_id" value={{item.item_id}}>
 						<input type="submit" value="Edit this listing">
 					</form>
 				</td>
 				<td>
 					<form action="{{url_for('removeItem')}}" method="POST">
-						<input type="hidden" id="itemid" name="itemid" value=item.item_id>
+						<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
 						<input type="submit" value="Remove this listing">
 					</form>
 				</td>

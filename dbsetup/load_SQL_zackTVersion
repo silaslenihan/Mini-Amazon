@@ -27,10 +27,10 @@ INSERT INTO Buyers VALUES('janedoe');
 INSERT INTO Sellers VALUES('evan7');
 INSERT INTO Sellers VALUES('janedoe');
 
-INSERT INTO Orders VALUES('johndoe', 1, 19.99,'2020-01-01','2020-02-01');
-INSERT INTO Orders VALUES('janedoe', 2, 17.50,'2020-03-10','2020-03-12');
-INSERT INTO Orders VALUES('mikey2', 3, 19.99,'2020-01-01','2020-02-01');
-INSERT INTO Orders VALUES('sarah1', 4, 17.50,'2020-03-10','2020-03-12');
+INSERT INTO OrderEntry VALUES (1, 1, 'johndoe', 87.50, '2020-03-01', '2020-04-01', 2, 'Clothing', 5, 'evan7');
+INSERT INTO OrderEntry VALUES (1, 2, 'johndoe', 59.97, '2020-03-02', '2020-04-02', 1, 'Media', 3, 'evan7');
+INSERT INTO OrderEntry VALUES (2, 1, 'mikey2', 87.50, '2020-03-03', '2020-04-03', 2, 'Clothing', 5, 'janedoe');
+INSERT INTO OrderEntry VALUES (2, 2, 'mikey2', 59.97, '2020-03-04', '2020-04-04', 1, 'Media', 3, 'janedoe');
 
 
 
@@ -46,10 +46,7 @@ INSERT INTO Reviews VALUES('sarah1',5,'2020-04-04','This is cool!',4.2);
 INSERT INTO Reviews VALUES('mikey2',8,'2020-04-04','This is cool!',4.1);
 
 
-INSERT INTO OrderItems VALUES(1,1,'Media',1,evan7);
-INSERT INTO OrderItems VALUES(2,2,'Clothing',1,evan7);
-INSERT INTO OrderItems VALUES(3,3,'Media',1,evan7);
-INSERT INTO OrderItems VALUES(4,4,'Media',1,evan7);
+
 
 
 INSERT INTO SellsItem VALUES('evan7', 1, 'Media', 19.99, 10);
