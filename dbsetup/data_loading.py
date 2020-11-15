@@ -8,6 +8,12 @@ seed(23)
 itemDataFrame = pd.read_csv('amazon_data_trimmed.csv')
 userDataFrame = pd.read_csv('amazon_users.csv')
 
+def removeApostrophe(toFix):
+	while "'" in toFix:
+		dex = toFix.index("'")
+		toFix = toFix[:dex]+toFix[dex+1:]
+	return toFix
+
 def generateReviewTable(total_items,buyer_list):
 
 	rev_username = []
@@ -62,6 +68,19 @@ def generateItemTable(itemDataFrame):
 	item_table["descrip"] = descrip
 	return item_table
 
+def generateUsers(userDataFrame):
+	for index in range(len(userDataFrame)):
+		username = "'" + userDataFrame['username'][index] + "'"
+		password = "'" + userDataFrame['password'][index] + "'"
+		name = "'" + userDataFrame['name'][index] + "'"
+		email = "'" + userDataFrame['email'][index] + "'"
+		address = "'" + userDataFrame['address'][index] + "'"
+		balance = userDataFrame['balance'][index]
+		isPrime = userDataFrame['isPrime'][index]
+		secret = "'" + userDataFrame['secret'][index] + "'"
+		insertUser = "INSERT INTO Users VALUES (%s, %s, %s, %s, %s, %.2f, %b, %s);" % (username, password, name, email, address, balance, isPrime, secret)
+
+
 def generateCategories(allCats,cur):
 	cat_name = []
 	cat_descrip = []
@@ -74,7 +93,7 @@ def generateCategories(allCats,cur):
 				cat_name.append(currCat)
 				cat_descrip.append('This is a category of item that fit based on category name')
 	for index in range(len(cat_name)):
-		currCatName = "'" + cat_name[index] + "'"
+		currCatName = "'" + removeApostrophe(cat_name[index]) + "'"
 		currDescrip = "'" + cat_descrip[index] + "'"
 		insertCategory = "INSERT INTO Category VALUES (%s, %s);" % (currCatName, currDescrip)
 		cur.execute(insertCategory)
