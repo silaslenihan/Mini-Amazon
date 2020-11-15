@@ -6,7 +6,7 @@
 	{% block content %}
 	<div class="main">
 		<h3> Editing {{ session['username']}}'s item listing for {{item.name}} </h3>
-		<form action="{{url_for('modifyItem')}}" method="POST">
+		<form action="{{url_for('sellingList')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
 			<label for="name"><b>Name: </b></label><br>
 			<input type="text" required id="name" name="name" value={{item.name}} maxlength="256"><br><br>

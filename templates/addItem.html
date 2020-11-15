@@ -5,14 +5,8 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 	<div class="main">
-		<h3> Adding item listing 
-			{% if not itemid==-1 %}
-			to {{itemname}}
-			{% endif %}
-		for {{ session['username']}} </h3>
+		<h3> Adding item listing for {{ session['username']}} </h3>
 		<form action="{{url_for('addItem')}}" method="POST">
-			<input type="hidden" id="itemid" name="itemid" value={{itemid}}>
-			{% if itemid==-1 %}
 			<label for="name"><b>Name: </b></label><br>
 			<input type="text" required id="name" name="name" maxlength="256"><br><br>
 			<label for="image"><b>Upload Item Image: </b></label><br>
@@ -22,7 +16,6 @@
             request.form.description }}"></textarea><br><br>
 			<label for="category"><b>Category: </b></label><br>
 			<input type="text" required id="category" name="category" maxlength="256"><br><br>
-			{% endif %}
 			<label for="price"><b>Price: </b></label><br>
 			<input type="number" required id="price" name="price" step=0.01 min=0><br><br>
 			<label for="count"><b>Count: </b></label><br>
