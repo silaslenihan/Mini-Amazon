@@ -5,16 +5,16 @@
 	{% extends 'layout.html' %}
 	{% block content %}
 	<div class="main">
-		<h3> Editing {{ session['username']}}'s item listing for {{name.name}} </h3>
+		<h3> Editing {{ session['username']}}'s item listing for {{item.name}} </h3>
 		<form action="{{url_for('modifyItem')}}" method="POST">
 			<input type="hidden" id="itemid" name="itemid" value={{item.item_id}}>
-			<label for="image"><b>Upload a new Image (Optional): </b></label><br>
-			<input type="file" id="image" name="image" accept="image/png, image/jpeg"><br><br>
+			<label for="name"><b>Name: </b></label><br>
+			<input type="text" required readonly id="name" name="name" value="{{item.name}}" maxlength="256"><br><br>
 			<label for="description"><b>Description: </b></label><br>
-			<textarea id="description" required name="description" rows="4" cols="50" maxlength="256" value="{{
-            item.description }}"></textarea><br><br>
+			<textarea id="description" required readonly name="description" rows="4" cols="50" maxlength="256">{{
+            item.description }}</textarea><br><br>
 			<label for="category"><b>Category: </b></label><br>
-			<input type="text" required id="category" name="category" value={{item.category}} maxlength="256"><br><br>
+			<input type="text" required readonly id="category" name="category" value="{{item.category}}"" maxlength="256"><br><br>
 			<label for="price"><b>Price: </b></label><br>
 			<input type="number" required id="price" name="price" step=0.01 min=0 value={{item.price}}><br><br>
 			<label for="count"><b>Count: </b></label><br>

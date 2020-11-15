@@ -9,9 +9,6 @@ import psycopg2
 import datetime
 from dateutil.relativedelta import relativedelta
 
-
-# TODO:
-# -modify item
 conn = psycopg2.connect(
 user="hshgoekz",
 password="0-_hWpr8BBMyZe-EO1A0iwRTOEfZzGY8",
@@ -20,24 +17,12 @@ port="5432"
 )
 cur = conn.cursor()
 
-
 app = Flask(__name__)
 # Secret key necessary for session login
 app.secret_key = 'sahara'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-
-
-# all of the following method are required to be implemented
-# there will be some function not included but required to be done
-# follow the project description for detail
-
-# my implementation is based on sqlite3, you are free to change it to sqlAlchemy
-
-
 
 # Require user to login to access site
 def login_required(f):
@@ -159,7 +144,6 @@ def selling_history():
         query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
-
         data_row['item_image'] = ''
         data_row['item_name'] = item_name
         data_row['buyer_username'] = result[2]
@@ -273,7 +257,7 @@ def addItem():
         cur.execute(checkItemExists)
         exists=cur.fetchall()
         if len(exists) != 0:
-            flash('Item name already exists, cannot add item for existing item name.')
+            flash('Item name already exists. Go to the item page and add a listing!')
             return redirect(url_for('root'))
 
         item_id = request.form['itemid']
@@ -293,18 +277,19 @@ def addItem():
             category = str(request.form['category'])
             price = str(request.form['price'])
             count = str(request.form['count'])
+            # Items table references Category, so need the category to exist before inserting item
+            catDescription = "'This is a category of item that fit based on category name'"
+            addCat="INSERT INTO Category VALUES (%s, %s);" % ("'"+category+"'", catDescription)
+            cur.execute(addCat)
             # TODO: change 1 to 0 once DB guys fix the setup
             query2 = f"INSERT INTO Items VALUES('{item_id}','{category}','{item_name}',1,0,'{description}');"
             cur.execute(query2)
             query1 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
             cur.execute(query1)
         else:
-
-
             query3 = f"SELECT cat_name from items where item_id = {item_id}"
             cur.execute(query3)
             category = cur.fetchall()[0][0]
-
             query4 = f"INSERT INTO SellsItem VALUES('{str(username)}','{item_id}','{category}','{price}','{count}');"
             cur.execute(query4)
         flash("Item sucessfully listed.")
@@ -316,19 +301,40 @@ def addItem():
 @app.route("/modifyItem", methods=["GET", "POST"])
 @login_required
 def modifyItem():
-    username = "'" +str(session['username'])+"'"
-    itemID = int(request.args['item_id'])
-    cur= conn.cursor()
-    findName="SELECT * FROM Items WHERE item_id = %d;" % itemID
-    cur.execute(findName)
-    catName = str(cur.fetchall()[0][1])
-    itemName= str(cur.fetchall()[0][2])
-    description= str(cur.fetchall()[0][5])
-    getSellerInfo= "SELECT price, stock FROM SellsItem WHERE item_id=%d AND seller_username=%s;" % (itemID, username)
-    cur.execute(getSellerInfo)
-    price=round((cur.fetchall()[0][1]),2)
-    stock= int(cur.fetchall()[0][2])
-
+    if request.method == 'GET':
+        username = "'" +str(session['username'])+"'"
+        itemID = int(request.args['item_id'])
+        cur= conn.cursor()
+        findItem="SELECT * FROM Items WHERE item_id = %d;" % itemID
+        cur.execute(findItem)
+        itemInfo =cur.fetchall()[0]
+        catName=itemInfo[1]
+        itemName=itemInfo[2]
+        description=itemInfo[5]
+        getSellerInfo= "SELECT price, stock FROM SellsItem WHERE item_id=%d AND seller_username=%s;" % (itemID, username)
+        cur.execute(getSellerInfo)
+        sellerInfo=cur.fetchall()[0]
+        price=round((sellerInfo[0]), 2)
+        stock= int(sellerInfo[1])
+        item = {
+            "item_id": itemID,
+            "name": itemName,
+            "category": catName,
+            "description": description,
+            "price": price,
+            "count": stock
+        }
+    if request.method == 'POST':
+        username = "'" + str(session['username']) + "'"
+        item_id = int(request.form['itemid'])
+        price = round(float(request.form['price']), 2)
+        stock = int(request.form['count'])
+        cur = conn.cursor()
+        updateSellerItem = "UPDATE SellsItem SET price = %.2f, stock = %d WHERE seller_username=%s AND item_id=%d;" % (price, stock, username, item_id)
+        cur.execute(updateSellerItem)
+        flash("Item has been updated!")
+        conn.commit()
+        return redirect(url_for('sellingList'))
     # give all parameters of current lisiting for item (i.e. description, cat, etc)
     return render_template("modifyItem.html", item=item)
 
@@ -342,6 +348,7 @@ def removeItem():
         cur= conn.cursor()
         remove = "DELETE From SellsItem WHERE item_id=%d AND seller_username=%s;" % (item_id, seller)
         cur.execute(remove)
+        conn.commit()
         return redirect(url_for('sellingList'))
     return redirect(url_for('sellingList'))
 
@@ -414,12 +421,14 @@ def addToCart():
             cur = conn.cursor()
             updateCart = "UPDATE Cart SET quantity = %d WHERE username=%s AND item_id=%d AND seller_username=%s;" % (quantity, username, itemID, seller)
             cur.execute(updateCart)
+            conn.commit()
             flash("Item(s) added to cart!")
             return redirect(url_for('cart'))
         else:
             cur = conn.cursor()
             addCart = "INSERT INTO Cart VALUES (%d, %s, %d, %.2f, %s);" % (itemID, username, int(quantity), price, seller)
             cur.execute(addCart)
+            conn.commit()
             flash("Item(s) added to cart!")
             return redirect(url_for('cart'))
     return redirect(url_for('cart'))
@@ -474,6 +483,7 @@ def removeFromCart():
         cur.execute(removeItems)
         addBacktoStock="UPDATE SellsItem SET stock=stock+%d WHERE seller_username=%s AND item_id=%d;" % (int(quantity), seller, int(itemID))
         cur.execute(addBacktoStock)
+        conn.commit()
         flash("Item(s) removed from cart!")
         return redirect(url_for('cart'))
     return redirect(url_for('cart'))
@@ -534,6 +544,7 @@ def purchase():
         entry_id += 1
     clearCart = "DELETE FROM Cart WHERE username = %s;" % username
     cur.execute(clearCart)
+    conn.commit()
     return redirect(url_for('purchase_history'))
 
 def pass_valid(p1, p2):
@@ -572,6 +583,7 @@ def addreview():
                 cur = conn.cursor()
                 addRev = "INSERT INTO Reviews VALUES (%s, %d, %s, %s, %d);" % (username, int(item_id), day, content, stars)
                 cur.execute(addRev)
+                conn.commit()
                 flash("Review submitted successfully")
                 return redirect(url_for('productDescription', itemid=item_id))
     getName = "SELECT name FROM Items WHERE item_id = %d;" % int(item_id)
@@ -601,6 +613,7 @@ def addbalance():
         cur = conn.cursor()
         update = "UPDATE Users SET balance = %d WHERE username = %s;" % (balance, username)
         cur.execute(update)
+        conn.commit()
         balance = "{:.2f}".format(balance)
         session['balance']=str(balance)
         return render_template("addBalance.html", error=error)
