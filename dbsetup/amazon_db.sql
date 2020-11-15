@@ -21,10 +21,10 @@ description VARCHAR(256) NOT NULL);
 CREATE TABLE Items
 (item_id INTEGER NOT NULL PRIMARY KEY,
 cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
-name VARCHAR (256) NOT NULL,
+name VARCHAR (1024) NOT NULL,
 avg_rate DECIMAL(10, 2) NOT NULL CHECK(avg_rate >= 1 AND avg_rate <= 5),
 total_ratings INTEGER NOT NULL,
-description VARCHAR(256) NOT NULL);
+description VARCHAR(1024) NOT NULL);
 
 CREATE TABLE Reviews 
 (username VARCHAR(256) NOT NULL REFERENCES Users(username),
