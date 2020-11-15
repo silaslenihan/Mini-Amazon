@@ -7,6 +7,7 @@ import json
 import os
 import psycopg2
 import datetime
+from dateutil.relativedelta import relativedelta
 
 
 # TODO:
@@ -117,29 +118,37 @@ def search_results():
 @app.route('/purchaseHistory', methods=['GET', 'POST'])
 @login_required
 def purchase_history():
-    query = f"SELECT * FROM OrderEntry WHERE buyer_username = {session['username']}"
+    query = f"SELECT * FROM OrderEntry WHERE buyer_username = '{session['username']}';"
     cur.execute(query)
     results = cur.fetchall()
     data = []
     for result in results:
         data_row = {}
-        data_row['item_name'] = result['']
-
-
-    return render_template('purchaseHistory.html',item='')
+        item_id = result[6]
+        itemName = "SELECT name FROM Items WHERE item_id = %d;" % item_id
+        cur.execute(itemName)
+        item_name = str(cur.fetchall()[0][0])
+        data_row['item_id'] = item_id
+        data_row['item_name'] = item_name
+        data_row['seller_username'] = result[9]
+        data_row['price_per_item'] = round(result[3]/result[8])
+        data_row['count'] = result[8]
+        data_row['purchase_timestamp'] = result[4]
+        data.append(data_row)
+    return render_template('purchaseHistory.html', items=data)
 
 @app.route('/sellingHistory', methods=['GET', 'POST'])
 @login_required
 def selling_history():
     username = session['username']
-    query = f"SELECT * FROM OrderEntry WHERE seller_username = '{username}'"
+    query = f"SELECT * FROM OrderEntry WHERE seller_username = '{username}';"
     cur.execute(query)
     results = cur.fetchall()
     data = []
     for result in results:
         data_row = {}
         item_id = result[1]
-        query1 = f"select name from Items where item_id = {item_id}"
+        query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
 
@@ -163,13 +172,13 @@ def selling_history():
 @login_required
 def sellingList():
     username = session['username']
-    query = f"select * from SellsItem where seller_username = '{username}'"
+    query = f"select * from SellsItem where seller_username = '{username}';"
     cur.execute(query)
     results = cur.fetchall()
     data = []
     for result in results:
         item_id = result[1  ]
-        query1 = f"select name from Items where item_id = {item_id}"
+        query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
         data_row = {}
@@ -200,7 +209,7 @@ def productDescription():
     description = results1[5]
     rating = results1[3]
     # get matching sellers from db
-    query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id}"
+    query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id};"
     cur.execute(query2)
     results2 = cur.fetchall()
     # get list of sellers who sell that item
@@ -215,7 +224,7 @@ def productDescription():
         seller['stock'] = result[4]
         seller_list.append(seller)
     # get matching reviews from db
-    query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id}"
+    query3 = f"SELECT * FROM Reviews WHERE item_id = {item_id};"
     cur.execute(query3)
     results3 = cur.fetchall()
     # get list of reviews about that item
@@ -483,14 +492,33 @@ def purchase():
     getCartItems = "SELECT * FROM Cart WHERE username = %s;" % username
     cur.execute(getCartItems)
     itemsList = cur.fetchall()
+    entry_id = 1
     for row in itemsList:
+        print(row)
         newMoney = float(row[2]*row[3])
         seller = "'"+str(row[4])+"'"
         updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s" % (newMoney, seller)
         cur.execute(updateSellerBalance)
         # Add each item to order items
-        # Waiting on updated ORDERS table
-    # Clear cart
+        # get category of item
+        item_id = int(row[0])
+        findCat = "SELECT cat_name FROM Items WHERE item_id = %d;" % item_id
+        cur.execute(findCat)
+        category = "'"+str(cur.fetchall()[0][0])+"'"
+        # get order and delivery date
+        dt_string = datetime.datetime.now().strftime("%Y-%m-%d")
+        orderDate = "'" + str(dt_string) + "'"
+        delivery = datetime.datetime.now() + relativedelta(weeks=1)
+        delivery = "'" + str(delivery.strftime("%Y-%m-%d")) + "'"
+        # find max order_id in OrderEntry
+        findMax = "SELECT MAX(order_id) FROM OrderEntry;"
+        cur.execute(findMax)
+        order_id = int(cur.fetchall()[0][0]) + 1
+        # Insert to OrderITems
+        insertOrder = "INSERT INTO OrderEntry " \
+                      "VALUES (%d, %d, %s, %.2f, %s, " \
+                      "%s, %d, %s, %d, %s);" % (order_id, entry_id, username, newMoney, orderDate, delivery, item_id, category, row[2], seller)
+        entry_id += 1
     clearCart = "DELETE FROM Cart WHERE username = %s" % username
     cur.execute(clearCart)
     return redirect(url_for('purchase_history'))
