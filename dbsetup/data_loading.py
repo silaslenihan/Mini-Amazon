@@ -14,6 +14,7 @@ def generateReviewTable(total_items,buyer_list):
 	rev_item = []
 	rev_date_time = []
 	rev_content = []
+	rev_content = []
 	rev_rating = []
 
 	review_list = ["good","bad","terrible","meh","absolutely lovely!","confused","pretty nice","awesome","cool","super!","wow","astonishing","crazy","great","phenomenal","wasteful","best money ive spent","couldve been better","nothing wrong","could be worse","so so","would buy again","wouldnt buy again"]
@@ -62,7 +63,7 @@ def generateItemTable(itemDataFrame):
 	item_table["descrip"] = descrip
 	return item_table
 
-def generateCategories(allCats,cur):
+def generateCategories(allCats,cur, conn):
 	cat_name = []
 	cat_descrip = []
 	cat_name.append('Misc Toy/Item')
@@ -74,10 +75,15 @@ def generateCategories(allCats,cur):
 				cat_name.append(currCat)
 				cat_descrip.append('This is a category of item that fit based on category name')
 	for index in range(len(cat_name)):
-		currCatName = "'" + cat_name[index] + "'"
-		currDescrip = "'" + cat_descrip[index] + "'"
+		category = cat_name[index]
+		if "'" in cat_name[index]:
+			dex= cat_name[index].index("'")
+			category = cat_name[index][:dex]+cat_name[index][dex+1:]
+		currCatName = "'" + str(category) + "'"
+		currDescrip = "'" + str(cat_descrip[index]) + "'"
 		insertCategory = "INSERT INTO Category VALUES (%s, %s);" % (currCatName, currDescrip)
 		cur.execute(insertCategory)
+	conn.commit()
 
 def generateBuyersAndSellers(userDataFrame):
 	usernames = userDataFrame['username']
@@ -130,4 +136,4 @@ port="5432"
 )
 cur = conn.cursor()
 
-generateCategories(itemDataFrame['amazon_category_and_sub_category'],cur)
+generateCategories(itemDataFrame['amazon_category_and_sub_category'],cur, conn)
