@@ -134,6 +134,7 @@ def purchase_history():
         data_row['price_per_item'] = round(result[3]/result[8])
         data_row['count'] = result[8]
         data_row['purchase_timestamp'] = result[4]
+        data_row['delivery'] = result[5]
         data.append(data_row)
     return render_template('purchaseHistory.html', items=data)
 
@@ -497,7 +498,7 @@ def purchase():
         print(row)
         newMoney = float(row[2]*row[3])
         seller = "'"+str(row[4])+"'"
-        updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s" % (newMoney, seller)
+        updateSellerBalance = "UPDATE Users SET balance = balance + %.2f WHERE username = %s;" % (newMoney, seller)
         cur.execute(updateSellerBalance)
         # Add each item to order items
         # get category of item
@@ -506,7 +507,7 @@ def purchase():
         cur.execute(findCat)
         category = "'"+str(cur.fetchall()[0][0])+"'"
         # get order and delivery date
-        dt_string = datetime.datetime.now().strftime("%Y-%m-%d")
+        dt_string = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         orderDate = "'" + str(dt_string) + "'"
         delivery = datetime.datetime.now() + relativedelta(weeks=1)
         delivery = "'" + str(delivery.strftime("%Y-%m-%d")) + "'"
@@ -518,8 +519,9 @@ def purchase():
         insertOrder = "INSERT INTO OrderEntry " \
                       "VALUES (%d, %d, %s, %.2f, %s, " \
                       "%s, %d, %s, %d, %s);" % (order_id, entry_id, username, newMoney, orderDate, delivery, item_id, category, row[2], seller)
+        cur.execute(insertOrder)
         entry_id += 1
-    clearCart = "DELETE FROM Cart WHERE username = %s" % username
+    clearCart = "DELETE FROM Cart WHERE username = %s;" % username
     cur.execute(clearCart)
     return redirect(url_for('purchase_history'))
 
