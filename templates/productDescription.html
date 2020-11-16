@@ -6,7 +6,7 @@
   <div class="main">
 	<div class="row">
   		<div class="column" style="margin-right:20px">
-  			<img src="../static/images/default-img.gif" alt="Default product image" class="productImage">
+  			<img src="{{ url_for('send_file', filename=data.image) }}" class="productImage">
   		</div>
   		<div class="column" style="margin-left:5px">
   			<h2>{{data.item_name}}</h2>
