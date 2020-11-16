@@ -63,6 +63,12 @@ def getUserDetails():
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def root():
+    conn = psycopg2.connect(
+        user="ojesxgzc",
+        password="jiJNn1_JFKJWlevwxBsWD-F0CRy5Flzt",
+        host="drona.db.elephantsql.com",
+        port="5432"
+    )
     # Need to adjust how average rating is calculated
     cur = conn.cursor()
     query = "SELECT item_id, name, avg_rate FROM ITEMS ORDER by avg_rate desc LIMIT 3;"
