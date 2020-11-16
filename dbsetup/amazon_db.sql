@@ -7,6 +7,11 @@ CREATE TABLE Users
  balance DECIMAL(10,2) NOT NULL,
  isPrime BOOLEAN NOT NULL,
  secret VARCHAR(256) NOT NULL);
+ 
+CREATE TABLE itemImages
+(item_id INTEGER NOT NULL REFERENCES Items(item_id),
+ imageName VARCHAR(256) NOT NULL,
+ PRIMARY KEY(item_id));
 
 CREATE TABLE Sellers
 (username VARCHAR(256) NOT NULL PRIMARY KEY REFERENCES Users(username));
