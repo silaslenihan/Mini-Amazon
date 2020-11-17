@@ -20,7 +20,7 @@
 					<table style="text-align: center">
 						<tr>
 							<td>
-								<img src="../static/images/default-img.gif" alt="Default product image"style="float:center">
+								<img src="{{ url_for('send_file', filename=item.image) }}" style="float:center">
 							</td>
 						</tr>
 						<tr>

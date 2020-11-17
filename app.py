@@ -20,9 +20,14 @@ cur = conn.cursor()
 app = Flask(__name__)
 # Secret key necessary for session login
 app.secret_key = 'sahara'
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'static/images'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # Require user to login to access site
 def login_required(f):
@@ -34,6 +39,10 @@ def login_required(f):
             flash('You need to login first.')
             return redirect(url_for('login'))
     return wrap
+
+@app.route('/uploads/<filename>')
+def send_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.route('/profileHome')
 @login_required
@@ -75,10 +84,18 @@ def root():
     results = cur.fetchall()
     items = []
     for result in results:
+        imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(result[0])
+        cur.execute(imageQuery)
+        imageResults = cur.fetchall()
+        if (len(imageResults)==0):
+            image="default-img.gif"
+        else:
+            image = imageResults[0][1]
         items.append({
             "item_id": result[0],
             "item_name": result[1],
-            "avg_rate": result[2]
+            "avg_rate": result[2],
+            "image": image
             })
     return render_template('home.html', items =items)
 
@@ -120,6 +137,13 @@ def purchase_history():
     for result in results:
         data_row = {}
         item_id = result[6]
+        imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(item_id)
+        cur.execute(imageQuery)
+        imageResults = cur.fetchall()
+        if (len(imageResults)==0):
+            image="default-img.gif"
+        else:
+            image = imageResults[0][1]
         itemName = "SELECT name FROM Items WHERE item_id = %d;" % item_id
         cur.execute(itemName)
         item_name = str(cur.fetchall()[0][0])
@@ -132,6 +156,7 @@ def purchase_history():
         data_row['count'] = result[8]
         data_row['purchase_timestamp'] = result[4]
         data_row['delivery'] = result[5]
+        data_row['image'] = image
         data.append(data_row)
     return render_template('purchaseHistory.html', items=data)
 
@@ -146,6 +171,13 @@ def selling_history():
     for result in results:
         data_row = {}
         item_id = result[6]
+        imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(item_id)
+        cur.execute(imageQuery)
+        imageResults = cur.fetchall()
+        if (len(imageResults)==0):
+            image="default-img.gif"
+        else:
+            image = imageResults[0][1]
         query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
@@ -160,6 +192,7 @@ def selling_history():
         data_row['timestamp'] = result[4]
         data_row['item_id'] = item_id
         data_row['totalSale'] = round((price*count), 2)
+        data_row['image'] = image
         data.append(data_row)
     return render_template('sellingHistory.html',data=data)
 
@@ -172,7 +205,14 @@ def sellingList():
     results = cur.fetchall()
     data = []
     for result in results:
-        item_id = result[1  ]
+        item_id = result[1]
+        imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(item_id)
+        cur.execute(imageQuery)
+        imageResults = cur.fetchall()
+        if (len(imageResults)==0):
+            image="default-img.gif"
+        else:
+            image = imageResults[0][1]
         query1 = f"select name from Items where item_id = {item_id};"
         cur.execute(query1)
         item_name = cur.fetchall()[0][0]
@@ -182,6 +222,7 @@ def sellingList():
         data_row['price'] = result[3]
         data_row['stock'] = result[4]
         data_row['item_id'] = item_id
+        data_row['image'] = image
         data.append(data_row)
     return render_template('sellingList.html', data=data)
 
@@ -209,6 +250,13 @@ def productDescription():
     name = results1[2]
     description = results1[5]
     rating = results1[3]
+    imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(item_id)
+    cur.execute(imageQuery)
+    imageResults = cur.fetchall()
+    if (len(imageResults)==0):
+        image="default-img.gif"
+    else:
+        image = imageResults[0][1]
     # get matching sellers from db
     query2 = f"SELECT * FROM SellsItem WHERE item_id = {item_id};"
     cur.execute(query2)
@@ -244,6 +292,7 @@ def productDescription():
         "item_name": name,
         "description": description,
         "rating": rating,
+        "image": image,
         "sellers_list": seller_list,
         "reviews_list": reviews_list
     }
@@ -263,23 +312,41 @@ def addItem():
         cur.execute(checkItemExists)
         exists=cur.fetchall()
         if len(exists) != 0:
-            flash('Item name already exists. Go to the item page and add a listing!')
-            return redirect(url_for('root'))
-
+            flash('Item name already exists.')
+            return redirect(request.url)
         item_id = request.form['itemid']
         username = session['username']
         price = str(request.form['price'])
         count = str(request.form['count'])
         if item_id == "-1":
             # new item
+
+            
+
             query = "SELECT * FROM ITEMS ORDER BY item_id desc LIMIT 1"
             cur.execute(query)
             result = cur.fetchall()[0]
             item_id = result[0] + 1
 
+            if 'file' not in request.files:
+                flash('No image file uploaded.')
+                return redirect(request.url)
+            file = request.files['file']
+            if file.filename == '' or not allowed_file(file.filename):
+                flash('Invalid image file. Please try again')
+                return redirect(request.url)
+            insertImage = ""   
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                if len(filename)>256:
+                    flash('Image filename too long. Please try again.')
+                    return redirect(request.url)   
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                insertImage = "INSERT INTO itemImages VALUES (%s, %s);" % (item_id, "'" + filename + "'")
+
             item_name = str(request.form['name'])
-            image = str(request.form['image'])
             description = str(request.form['description'])
+            print(description)
             category = str(request.form['category'])
             price = str(request.form['price'])
             count = str(request.form['count'])
@@ -298,6 +365,8 @@ def addItem():
             cur.execute(query2)
             query1 = f"INSERT INTO SellsItem VALUES('{str(username)}',{item_id},'{category}',{price},{count});"
             cur.execute(query1)
+
+            cur.execute(insertImage)
         else:
             query3 = f"SELECT cat_name from items where item_id = {item_id}"
             cur.execute(query3)
@@ -470,6 +539,13 @@ def cart():
         totalCost=0
         totalCost = "{:.2f}".format(totalCost)
     for row in cartItems:
+        imageQuery = "SELECT * FROM itemImages WHERE item_id = %d;" % int(row[0])
+        cur.execute(imageQuery)
+        imageResults = cur.fetchall()
+        if (len(imageResults)==0):
+            image="default-img.gif"
+        else:
+            image = imageResults[0][1]
         data_row = {}
         data_row['item_id'] = row[0]
         data_row['seller_username'] = row[1]
@@ -479,6 +555,7 @@ def cart():
         data_row['cat_name'] = row[5]
         data_row['avg_rate'] = row[6]
         data_row['description'] = row[7]
+        data_row['image'] = image
         items.append(data_row)
     return render_template('cart.html', items=items, cost=totalCost)
 

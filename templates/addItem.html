@@ -10,13 +10,13 @@
 			to {{itemname}}
 			{% endif %}
 		for {{ session['username']}} </h3>
-		<form action="{{url_for('addItem')}}" method="POST">
+		<form action="{{url_for('addItem')}}" method="POST" enctype=multipart/form-data>
 			<input type="hidden" id="itemid" name="itemid" value={{itemid}}>
 			{% if itemid==-1 %}
 			<label for="name"><b>Name: </b></label><br>
 			<input type="text" required id="name" name="name" maxlength="256"><br><br>
 			<label for="image"><b>Upload Item Image: </b></label><br>
-			<input type="file" required id="image" name="image" accept="image/png, image/jpeg"><br><br>
+			<input type="file" required id="file" name="file" accept="image/png, image/jpeg"><br><br>
 			<label for="description"><b>Description: </b></label><br>
 			<textarea id="description" required name="description" rows="4" cols="50" maxlength="256" value="{{
             request.form.description }}"></textarea><br><br>
