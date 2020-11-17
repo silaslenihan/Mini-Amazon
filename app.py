@@ -69,7 +69,6 @@ def root():
         host="drona.db.elephantsql.com",
         port="5432"
     )
-    # Need to adjust how average rating is calculated
     cur = conn.cursor()
     query = "SELECT item_id, name, avg_rate FROM ITEMS ORDER by avg_rate desc LIMIT 3;"
     cur.execute(query)
@@ -698,7 +697,7 @@ def registrationForm():
         if not pass_valid(passwrd, confirmPass):
             error = 'Passwords do not match, try again.'
             return render_template("register.html", error=error)
-        secret = str(request.form['name'])
+        secret = str(request.form['secret'])
         if secret == "":
             error = "Please enter a secret answer"
             return render_template("register.html", error=error)
