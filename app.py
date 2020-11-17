@@ -116,10 +116,16 @@ def search_results():
         data_row['item_id'] = row[0]
         findMax = "SELECT MAX(price) FROM SellsItem WHERE item_id = %d;" % row[0]
         cur.execute(findMax)
-        maxPrice = round(cur.fetchall()[0][0], 2)
+        try:
+            maxPrice = round(cur.fetchall()[0][0], 2)
+        except:
+            maxPrice = 0
         findMin = "SELECT MIN(price) FROM SellsItem WHERE item_id = %d;" % row[0]
         cur.execute(findMin)
-        minPrice = round(cur.fetchall()[0][0], 2)
+        try:
+            minPrice = round(cur.fetchall()[0][0], 2)
+        except:
+            minPrice = 0
         data_row['range'] = str(minPrice)+" - $"+str(maxPrice)
         data_row['name'] = row[2]
         data_row['category'] = row[1]
