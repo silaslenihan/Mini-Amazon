@@ -310,16 +310,20 @@ def productDescription():
 def addItem():
     username = "'"+str(session['username'])+"'"
     if request.method == 'POST':
-        item_name = "'"+str(request.form['name'])+"'"
-        # if 2 products have the same name, then their itemID is the same
         cur = conn.cursor()
-        checkItemExists = "SELECT item_id FROM Items WHERE name = %s;" % item_name
-        print(checkItemExists)
-        cur.execute(checkItemExists)
-        exists=cur.fetchall()
-        if len(exists) != 0:
-            flash('Item name already exists.')
-            return redirect(request.url)
+        try:
+            item_name = "'"+str(request.form['name'])+"'"
+        # if 2 products have the same name, then their itemID is the same
+            
+            checkItemExists = "SELECT item_id FROM Items WHERE name = %s;" % item_name
+            print(checkItemExists)
+            cur.execute(checkItemExists)
+            exists=cur.fetchall()
+            if len(exists) != 0:
+                flash('Item name already exists.')
+                return redirect(request.url)
+        except:
+            pass
         item_id = request.form['itemid']
         username = session['username']
         price = str(request.form['price'])
